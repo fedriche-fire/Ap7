@@ -113,33 +113,81 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* TABLEAU CYBER */
-        .table-custom {
-            color: var(--text-main) !important;
+        /* BARRE DE DÉFILEMENT HORIZONTAL HIDE/CUSTOM */
+        .horizontal-scroll-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding-bottom: 10px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .table-custom th {
-            background-color: var(--input-bg) !important;
-            border-color: var(--border-color) !important;
-            color: #00f0ff !important;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .horizontal-scroll-container::-webkit-scrollbar {
+            height: 6px;
         }
 
-        .table-custom td {
-            background-color: var(--bg-card) !important;
-            border-color: var(--border-color) !important;
-            color: var(--text-main) !important;
-            vertical-align: middle;
+        .horizontal-scroll-container::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 10px;
         }
 
-        .img-preview {
-            width: 50px;
-            height: 50px;
+        .horizontal-scroll-container::-webkit-scrollbar-thumb {
+            background: #00f0ff;
+            border-radius: 10px;
+        }
+
+        /* CARTE DE JEU DANS SECTION HORIZONTALE */
+        .game-item-card {
+            flex: 0 0 160px;
+            background: rgba(7, 10, 20, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 10px;
+            position: relative;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .game-item-card:hover {
+            border-color: #00f0ff;
+            transform: translateY(-3px);
+        }
+
+        .game-item-img {
+            width: 100%;
+            height: 110px;
             object-fit: cover;
-            border-radius: 12px;
-            border: 1px solid #00f0ff;
+            border-radius: 10px;
+            border: 1px solid #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .game-item-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+
+        .game-item-size {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .game-item-delete {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.6);
         }
 
         /* BARRE DE NAVIGATION INFÉRIEURE MOBILE/DESKTOP (BOTTOM NAV) */
@@ -344,7 +392,7 @@
                             </div>
                         </div>
 
-                        <!-- LISTE DES JEUX PUBLIÉS -->
+                        <!-- LISTE DES JEUX PUBLIÉS (TRIÉS PAR SECTIONS AVEC DÉFILEMENT HORIZONTAL) -->
                         <div class="col-lg-7">
                             <div class="card-rgb p-4">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -352,23 +400,8 @@
                                     <span class="badge bg-info text-dark fw-bold rounded-pill px-3" id="gameCount">0 jeu</span>
                                 </div>
 
-                                <div class="table-responsive">
-                                    <table class="table table-custom align-middle">
-                                        <thead>
-                                            <tr>
-                                                <th>Cover</th>
-                                                <th>Titre</th>
-                                                <th>Plateforme</th>
-                                                <th>Taille</th>
-                                                <th class="text-end">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="adminGamesTable">
-                                            <tr>
-                                                <td colspan="5" class="text-center text-muted py-4">Chargement...</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div id="adminGamesContainer">
+                                    <p class="text-center text-muted py-4">Chargement...</p>
                                 </div>
                             </div>
                         </div>
@@ -442,7 +475,7 @@
         const loginError = document.getElementById('loginError');
         const logoutBtn = document.getElementById('logoutBtn');
         const addGameForm = document.getElementById('addGameForm');
-        const adminGamesTable = document.getElementById('adminGamesTable');
+        const adminGamesContainer = document.getElementById('adminGamesContainer');
         const gameCount = document.getElementById('gameCount');
 
         const gamePlatformSelect = document.getElementById('gamePlatform');
@@ -590,38 +623,68 @@
             }
         });
 
-        // CHARGEMENT JEUX
+        // CHARGEMENT JEUX (REGROUPEMENT PAR SECTIONS AVEC DÉFILEMENT HORIZONTAL)
         function loadAdminGames() {
             const gamesRef = collection(db, "games");
             onSnapshot(gamesRef, (snapshot) => {
-                adminGamesTable.innerHTML = "";
+                adminGamesContainer.innerHTML = "";
                 gameCount.textContent = `${snapshot.size} jeu(x)`;
 
                 if (snapshot.empty) {
-                    adminGamesTable.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Aucun jeu disponible.</td></tr>`;
+                    adminGamesContainer.innerHTML = `<p class="text-center text-muted py-4">Aucun jeu disponible.</p>`;
                     return;
                 }
 
+                // Regroupement des jeux par plateforme
+                const gamesByPlatform = {};
                 snapshot.forEach((gameDoc) => {
                     const game = gameDoc.data();
                     const id = gameDoc.id;
                     const plat = game.platform || game.category || "PSP";
 
-                    adminGamesTable.innerHTML += `
-                        <tr>
-                            <td><img src="${game.imageUrl || 'https://via.placeholder.com/50'}" class="img-preview" alt="Cover" onerror="this.src='https://via.placeholder.com/50'"></td>
-                            <td class="fw-bold">${game.title}</td>
-                            <td><span class="badge bg-dark border border-info text-info">${plat}</span></td>
-                            <td>${game.size || 'N/A'}</td>
-                            <td class="text-end">
-                                <button class="btn btn-sm btn-outline-danger delete-btn rounded-circle" data-id="${id}">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
+                    if (!gamesByPlatform[plat]) {
+                        gamesByPlatform[plat] = [];
+                    }
+                    gamesByPlatform[plat].push({ id, ...game });
                 });
 
+                // Génération HTML pour chaque section
+                Object.keys(gamesByPlatform).forEach((platform) => {
+                    const gamesList = gamesByPlatform[platform];
+                    
+                    let sectionHtml = `
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h6 class="fw-bold text-info m-0">
+                                    <i class="fa-solid fa-gamepad me-1"></i> ${platform} 
+                                    <span class="badge bg-dark border border-secondary text-muted ms-1">${gamesList.length}</span>
+                                </h6>
+                            </div>
+                            <div class="horizontal-scroll-container">
+                    `;
+
+                    gamesList.forEach((game) => {
+                        sectionHtml += `
+                            <div class="game-item-card">
+                                <button class="btn btn-sm btn-danger rounded-circle delete-btn game-item-delete" data-id="${game.id}" title="Supprimer">
+                                    <i class="fa-solid fa-trash fa-xs"></i>
+                                </button>
+                                <img src="${game.imageUrl || 'https://via.placeholder.com/150'}" class="game-item-img" alt="Cover" onerror="this.src='https://via.placeholder.com/150'">
+                                <div class="game-item-title" title="${game.title}">${game.title}</div>
+                                <div class="game-item-size"><i class="fa-solid fa-hard-drive me-1"></i>${game.size || 'N/A'}</div>
+                            </div>
+                        `;
+                    });
+
+                    sectionHtml += `
+                            </div>
+                        </div>
+                    `;
+
+                    adminGamesContainer.innerHTML += sectionHtml;
+                });
+
+                // Attacher les événements de suppression
                 document.querySelectorAll('.delete-btn').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                         const docId = e.currentTarget.getAttribute('data-id');
