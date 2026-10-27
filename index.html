@@ -1,459 +1,438 @@
+
 <!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+<html lang="fr" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr las GAMES - Panel Cyber RGB</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome icons -->
+    <title>GameAdmin iOS Glass - Panel Firebase Complete</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    },
+                    colors: {
+                        ios: {
+                            blue: '#007AFF',
+                            purple: '#AF52DE',
+                            pink: '#FF2D55',
+                            indigo: '#5856D6',
+                            teal: '#30B0C7',
+                            green: '#34C759',
+                            orange: '#FF9500',
+                            red: '#FF3B30',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --bg-body: #050811;
-            --bg-card: #0d1322;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #1e293b;
-            --input-bg: #070a14;
+        .glass-panel {
+            background: rgba(22, 22, 38, 0.75);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
-
-        /* ANIMATION DE DÉGRADÉ RGB */
-        @keyframes rgbGlow {
-            0% { border-color: #ff007f; box-shadow: 0 0 15px rgba(255, 0, 127, 0.4); }
-            33% { border-color: #00f0ff; box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
-            66% { border-color: #7000ff; box-shadow: 0 0 15px rgba(112, 0, 255, 0.4); }
-            100% { border-color: #ff007f; box-shadow: 0 0 15px rgba(255, 0, 127, 0.4); }
+        .glass-card {
+            background: rgba(32, 32, 54, 0.55);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
-        @keyframes textRgb {
-            0% { color: #ff007f; }
-            33% { color: #00f0ff; }
-            66% { color: #7000ff; }
-            100% { color: #ff007f; }
-        }
-
-        @keyframes pulseGlow {
-            0% { transform: scale(1); filter: drop-shadow(0 0 10px #00f0ff); }
-            50% { transform: scale(1.08); filter: drop-shadow(0 0 20px #ff007f); }
-            100% { transform: scale(1); filter: drop-shadow(0 0 10px #00f0ff); }
-        }
-
-        body {
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            min-height: 100vh;
-            padding-bottom: 80px; /* Espace pour la barre de nav inférieure */
-        }
-
-        .text-rgb {
-            animation: textRgb 6s infinite linear;
-            font-weight: 800;
-        }
-
-        .card-rgb {
-            background-color: var(--bg-card);
-            border: 2px solid #00f0ff;
-            border-radius: 20px;
-            animation: rgbGlow 8s infinite linear;
-            backdrop-filter: blur(10px);
-        }
-
-        /* ANIMATION INTERACTIVE DE CONNEXION */
-        .login-card {
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .login-card:focus-within {
-            transform: scale(1.02);
-        }
-
-        .animated-icon {
-            animation: pulseGlow 3s infinite ease-in-out;
-        }
-
-        /* INPUTS STYLE CYBER */
-        .form-control, .form-select {
-            background-color: var(--input-bg) !important;
-            border: 1px solid #1e293b !important;
-            color: #ffffff !important;
-            border-radius: 12px;
-            padding: 12px 16px;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: #00f0ff !important;
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.5) !important;
+        .glass-card:hover {
+            background: rgba(42, 42, 70, 0.7);
+            border-color: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
         }
-
-        /* BOUTON NEON RGB */
-        .btn-rgb {
-            background: linear-gradient(45deg, #ff007f, #7000ff, #00f0ff);
-            background-size: 200% 200%;
-            animation: gradientMove 4s ease infinite;
-            color: #ffffff;
-            border: none;
-            font-weight: 700;
-            border-radius: 50px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .btn-rgb:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 20px rgba(0, 240, 255, 0.4);
-            color: #ffffff;
-        }
-
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* BARRE DE DÉFILEMENT HORIZONTAL HIDE/CUSTOM */
-        .horizontal-scroll-container {
-            display: flex;
-            overflow-x: auto;
-            gap: 12px;
-            padding-bottom: 10px;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .horizontal-scroll-container::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .horizontal-scroll-container::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 10px;
-        }
-
-        .horizontal-scroll-container::-webkit-scrollbar-thumb {
-            background: #00f0ff;
-            border-radius: 10px;
-        }
-
-        /* CARTE DE JEU DANS SECTION HORIZONTALE */
-        .game-item-card {
-            flex: 0 0 160px;
-            background: rgba(7, 10, 20, 0.8);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 10px;
-            position: relative;
-            transition: transform 0.2s ease, border-color 0.2s ease;
-        }
-
-        .game-item-card:hover {
-            border-color: #00f0ff;
-            transform: translateY(-3px);
-        }
-
-        .game-item-img {
-            width: 100%;
-            height: 110px;
-            object-fit: cover;
-            border-radius: 10px;
-            border: 1px solid #1e293b;
-            margin-bottom: 8px;
-        }
-
-        .game-item-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #ffffff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 2px;
-        }
-
-        .game-item-size {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .game-item-delete {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            width: 28px;
-            height: 28px;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-        }
-
-        /* BARRE DE NAVIGATION INFÉRIEURE MOBILE/DESKTOP (BOTTOM NAV) */
-        .bottom-nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 65px;
-            background-color: rgba(13, 19, 34, 0.95);
-            border-top: 2px solid #00f0ff;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 9999;
+        .glass-input {
+            background: rgba(15, 15, 28, 0.65);
             backdrop-filter: blur(10px);
-            box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            transition: all 0.2s ease;
         }
-
-        .bottom-nav-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            position: relative;
+        .glass-input:focus {
+            border-color: #007AFF;
+            background: rgba(20, 20, 40, 0.9);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+            outline: none;
         }
-
-        .bottom-nav-btn i {
-            font-size: 1.3rem;
-            margin-bottom: 2px;
+        .glass-btn-primary {
+            background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.35);
+            transition: all 0.2s ease;
         }
-
-        .bottom-nav-btn.active {
-            color: #00f0ff;
-            transform: translateY(-4px);
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+        .glass-btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.5);
+            transform: scale(1.01);
         }
-
-        .notification-badge-rgb {
-            position: absolute;
-            top: -5px;
-            right: 15px;
-            background: #ff007f;
-            color: white;
-            font-size: 0.65rem;
-            padding: 2px 6px;
-            border-radius: 50px;
-            box-shadow: 0 0 8px #ff007f;
+        .glow-orb-1 {
+            position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw; border-radius: 50%;
+            background: radial-gradient(circle, rgba(88, 86, 214, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(80px); z-index: -1; animation: float 18s ease-in-out infinite alternate;
         }
-
-        /* VUE DASHBOARD ANIMÉE */
-        .fade-in-up {
-            animation: fadeInUp 0.5s ease-out forwards;
+        .glow-orb-2 {
+            position: fixed; bottom: -15%; right: -10%; width: 55vw; height: 55vw; border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 122, 255, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(90px); z-index: -1; animation: float 22s ease-in-out infinite alternate-reverse;
         }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(40px, 40px) rotate(10deg); }
         }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
     </style>
 </head>
-<body>
+<body class="bg-[#0b0b14] text-gray-100 font-sans min-h-screen relative overflow-x-hidden pb-12 selection:bg-blue-500 selection:text-white">
 
-    <!-- LOGIN SECTION AVEC ANIMATIONS INTERACTIVES -->
-    <div id="loginSection" class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-        <div class="card-rgb login-card p-4 p-sm-5" style="width: 100%; max-width: 420px;">
-            <div class="text-center mb-4">
-                <i class="fa-solid fa-gamepad animated-icon text-rgb fa-4x mb-3"></i>
-                <h3 class="fw-bold text-white mb-1">Dr las <span class="text-rgb">GAMES</span></h3>
-                <p class="text-muted small">Panel de contrôle RGB V6</p>
+    <!-- Ambient Glowing Orbs Background -->
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- SECTION LOGIN (Visible si non connecté) -->
+    <div id="loginSection" class="min-h-screen flex items-center justify-center px-4">
+        <div class="glass-panel rounded-3xl p-8 w-full max-w-md space-y-6 border border-white/20">
+            <div class="text-center space-y-2">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-purple-500 flex items-center justify-center mx-auto shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-lock text-2xl text-white"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white">Administration Dr. Las</h2>
+                <p class="text-xs text-gray-400">Connectez-vous pour accéder au panel de gestion</p>
             </div>
-            
-            <form id="loginForm">
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-white">Adresse Email Admin</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-dark border-secondary text-info"><i class="fa-solid fa-envelope"></i></span>
-                        <input type="email" id="loginEmail" class="form-control" placeholder="admin@drlasgames.com" required>
-                    </div>
+
+            <div id="loginError" class="hidden p-3 rounded-xl bg-red-500/20 border border-red-500/30 text-red-300 text-xs text-center"></div>
+
+            <form id="loginForm" class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300 uppercase tracking-wider">Email Administrateur</label>
+                    <input type="email" id="loginEmail" required placeholder="admin@drlas.org" class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
                 </div>
-                <div class="mb-4">
-                    <label class="form-label small fw-bold text-white">Mot de passe secret</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-dark border-secondary text-info"><i class="fa-solid fa-lock"></i></span>
-                        <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
-                    </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300 uppercase tracking-wider">Mot de passe</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
                 </div>
-                <div id="loginError" class="alert alert-danger p-2 small d-none" role="alert"></div>
-                <button type="submit" id="loginBtn" class="btn btn-rgb w-100 py-3 mt-2">
-                    <i class="fa-solid fa-bolt me-2"></i>ACCÉDER AU PANEL
+                <button type="submit" class="w-full py-3.5 rounded-2xl glass-btn-primary text-white text-sm font-semibold shadow-lg">
+                    Se connecter au Panel
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- DASHBOARD PRINCIPAL RGB -->
-    <div id="dashboardSection" class="d-none fade-in-up">
-        
-        <!-- HEADER EN-TÊTE -->
-        <nav class="navbar navbar-dark bg-dark border-bottom border-secondary px-3 mb-4 sticky-top shadow-lg">
-            <div class="container-fluid">
-                <span class="navbar-brand fw-bold d-flex align-items-center gap-2">
-                    <i class="fa-solid fa-shield-halved text-rgb fa-lg"></i>
-                    <span class="text-white">Panel <span class="text-rgb">Cyber RGB</span></span>
-                </span>
-                <div class="d-flex align-items-center gap-2">
-                    <a href="index.html" target="_blank" class="btn btn-outline-info btn-sm rounded-pill px-3">
-                        <i class="fa-solid fa-eye me-1"></i> Voir le Store
+    <!-- TABLEAU DE BORD PRINCIPAL (Visible quand connecté) -->
+    <div id="dashboardSection" class="hidden">
+        <!-- HEADER / NAVIGATION -->
+        <header class="sticky top-0 z-40 w-full px-4 lg:px-8 py-3 mb-8 border-b border-white/10 glass-panel">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+                
+                <!-- Brand & Status -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                        <i class="fa-solid fa-gamepad text-xl text-white"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-bold text-lg tracking-tight text-white">Dr. Las Admin</h1>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                Firebase Live
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-400" id="headerGameCount">Chargement...</p>
+                    </div>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3 justify-end w-full sm:w-auto">
+                    <!-- Link to Site -->
+                    <a href="https://drlas.org" target="_blank" rel="noopener noreferrer" 
+                       class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium transition text-gray-200">
+                        <i class="fa-solid fa-globe text-blue-400"></i>
+                        <span class="hidden md:inline">Visiter drlas.org</span>
                     </a>
-                    <button id="logoutBtn" class="btn btn-outline-danger btn-sm rounded-pill px-3">
-                        <i class="fa-solid fa-power-off me-1"></i> Quitter
+
+                    <!-- Log Button -->
+                    <button onclick="toggleLogsModal(true)" class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium transition text-gray-200">
+                        <i class="fa-solid fa-list-check text-purple-400"></i>
+                        <span class="hidden md:inline">Logs</span>
+                        <span id="log-badge-count" class="px-1.5 py-0.2 text-[10px] bg-purple-500 text-white rounded-full">0</span>
+                    </button>
+
+                    <!-- Tabs Switcher -->
+                    <div class="flex p-1 rounded-2xl bg-black/40 border border-white/10">
+                        <button onclick="switchTab('games')" id="navGamesBtn" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition active bg-blue-600 text-white">
+                            <i class="fa-solid fa-gamepad mr-1"></i> Jeux
+                        </button>
+                        <button onclick="switchTab('chat')" id="navChatBtn" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition text-gray-400 hover:text-white relative">
+                            <i class="fa-solid fa-comments mr-1"></i> Avis
+                            <span id="unreadBadgeNav" class="hidden absolute -top-1 -right-1 px-1.5 py-0.2 text-[10px] bg-red-500 text-white rounded-full">0</span>
+                        </button>
+                    </div>
+
+                    <!-- Logout Button -->
+                    <button id="logoutBtn" title="Se déconnecter" class="px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-medium transition">
+                        <i class="fa-solid fa-power-off"></i>
                     </button>
                 </div>
-            </div>
-        </nav>
 
-        <div class="container">
-            
-            <!-- CONTENU TABS -->
-            <div class="tab-content" id="cyberTabsContent">
+            </div>
+        </header>
+
+        <!-- MAIN CONTAINER -->
+        <main class="max-w-7xl mx-auto px-4 lg:px-8 space-y-6">
+
+            <!-- TAB 1: CATALOGUE DE JEUX -->
+            <div id="tabGamesView" class="space-y-6">
                 
-                <!-- TAB 1 : GESTION ET AJOUT DE JEUX -->
-                <div class="tab-pane fade show active" id="tabGamesView">
-                    <div class="row g-4">
+                <!-- ACTION BAR & RECHERCHE -->
+                <section class="glass-panel rounded-3xl p-5 space-y-4">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                         
-                        <!-- FORMULAIRE AJOUT JEU -->
-                        <div class="col-lg-5">
-                            <div class="card-rgb p-4">
-                                <h5 class="fw-bold mb-3 text-white"><i class="fa-solid fa-plus-circle text-info me-2"></i>Publier un Jeu</h5>
-                                
-                                <form id="addGameForm">
-                                    <div class="mb-3">
-                                        <label class="form-label small">Titre du Jeu</label>
-                                        <input type="text" id="gameTitle" class="form-control" placeholder="Ex: God of War Ghost of Sparta" required>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <div class="col-12 col-sm-6 mb-2 mb-sm-0">
-                                            <label class="form-label small">Plateforme</label>
-                                            <select id="gamePlatform" class="form-select" required>
-                                                <option value="PSP">PSP</option>
-                                                <option value="PS2">PS2</option>
-                                                <option value="PS Vita">PS Vita</option>
-                                                <option value="PS3">PS3</option>
-                                                <option value="Android">Android</option>
-                                                <option value="PC">PC</option>
-                                                <option value="Switch">Switch</option>
-                                                <option value="3DS">3DS</option>
-                                                <option value="Wii">Wii</option>
-                                                <option value="GameCube">GameCube</option>
-                                                <option value="custom">+ Autre section</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-12 col-sm-6">
-                                            <label class="form-label small">Taille</label>
-                                            <input type="text" id="gameSize" class="form-control" placeholder="Ex: 1,1 Go" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3 d-none" id="customPlatformContainer">
-                                        <label class="form-label small text-warning"><i class="fa-solid fa-folder-plus me-1"></i> Nouvelle section</label>
-                                        <input type="text" id="customPlatformInput" class="form-control" placeholder="Ex: PS5, Xbox...">
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label small">Pochette / Image (URL)</label>
-                                        <input type="url" id="gameImage" class="form-control" placeholder="https://..." required>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label small d-flex justify-content-between align-items-center">
-                                            <span>Liens de téléchargement</span>
-                                            <button type="button" id="addMoreLinksBtn" class="btn btn-sm btn-outline-info py-0 rounded-pill"><i class="fa-solid fa-plus"></i> Lien miroir</button>
-                                        </label>
-                                        <div id="downloadLinksList">
-                                            <div class="input-group mb-2 link-row">
-                                                <input type="text" class="form-control link-name" placeholder="Nom du lien" value="Télécharger (Mediafire)">
-                                                <input type="url" class="form-control link-url" placeholder="https://mediafire.com/file/..." required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label small">Vidéo Gameplay (URL YouTube)</label>
-                                        <input type="text" id="gameYoutube" class="form-control" placeholder="https://youtu.be/...">
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label small">Description du Jeu</label>
-                                        <textarea id="gameDescription" class="form-control" rows="3" placeholder="Présentation du jeu..."></textarea>
-                                    </div>
-
-                                    <button type="submit" id="submitGameBtn" class="btn btn-rgb w-100 py-3 mt-2">
-                                        <i class="fa-solid fa-rocket me-2"></i>PUBLIER SUR LE STORE
-                                    </button>
-                                </form>
-                            </div>
+                        <!-- Barre de recherche -->
+                        <div class="relative w-full md:w-1/2">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
+                            <input type="text" id="search-input" oninput="handleSearchInput(event)" placeholder="Rechercher un jeu (ex: God of War, PSP, APK...)" 
+                                   class="w-full pl-11 pr-10 py-3 rounded-2xl glass-input text-sm">
+                            <button onclick="clearSearch()" id="clear-search-btn" class="hidden absolute right-3 top-3 text-gray-400 hover:text-white text-sm">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
                         </div>
 
-                        <!-- LISTE DES JEUX PUBLIÉS (TRIÉS PAR SECTIONS AVEC DÉFILEMENT HORIZONTAL) -->
-                        <div class="col-lg-7">
-                            <div class="card-rgb p-4">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="fw-bold m-0 text-white"><i class="fa-solid fa-list text-info me-2"></i>Catalogue en Ligne</h5>
-                                    <span class="badge bg-info text-dark fw-bold rounded-pill px-3" id="gameCount">0 jeu</span>
-                                </div>
-
-                                <div id="adminGamesContainer">
-                                    <p class="text-center text-muted py-4">Chargement...</p>
-                                </div>
-                            </div>
-                        </div>
-
+                        <!-- Bouton Ajouter un Jeu -->
+                        <button onclick="openGameModal()" class="w-full md:w-auto px-6 py-3 rounded-2xl glass-btn-primary text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-lg whitespace-nowrap">
+                            <i class="fa-solid fa-plus-circle text-base"></i>
+                            <span>Publier un Jeu</span>
+                        </button>
                     </div>
-                </div>
 
-                <!-- TAB 2 : MODÉRATION CHAT & AVIS -->
-                <div class="tab-pane fade" id="tabChatView">
-                    <div class="card-rgb p-4">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                            <h5 class="fw-bold m-0 text-white"><i class="fa-solid fa-comments text-info me-2"></i>Avis et Commentaires Utilisateurs</h5>
-                            <div class="btn-group btn-group-sm" role="group">
-                                <button type="button" id="filterUnreadBtn" class="btn btn-outline-warning active rounded-start-pill">
-                                    <i class="fa-solid fa-bell me-1"></i> Non lus
-                                </button>
-                                <button type="button" id="filterAllBtn" class="btn btn-outline-secondary rounded-end-pill">
-                                    <i class="fa-solid fa-list me-1"></i> Tous
-                                </button>
-                            </div>
-                        </div>
-
-                        <div id="adminChatContainer">
-                            <p class="text-center text-muted py-4">Chargement des avis...</p>
-                        </div>
+                    <!-- Filtres par catégories -->
+                    <div class="flex flex-wrap items-center gap-2 border-t border-white/10 pt-4">
+                        <span class="text-xs text-gray-400 font-semibold mr-2 uppercase tracking-wider">Filtres :</span>
+                        <button onclick="filterCategory('All')" class="category-btn border px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-blue-600 border-blue-500 text-white" data-category="All">Tous</button>
+                        <button onclick="filterCategory('PSP')" class="category-btn border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 transition" data-category="PSP"><i class="fa-solid fa-gamepad mr-1 text-purple-400"></i>PSP</button>
+                        <button onclick="filterCategory('PS2')" class="category-btn border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 transition" data-category="PS2"><i class="fa-solid fa-compact-disc mr-1 text-blue-400"></i>PS2</button>
+                        <button onclick="filterCategory('Android')" class="category-btn border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 transition" data-category="Android"><i class="fa-brands fa-android mr-1 text-emerald-400"></i>Android</button>
+                        <button onclick="filterCategory('PC')" class="category-btn border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 transition" data-category="PC"><i class="fa-solid fa-desktop mr-1 text-teal-400"></i>PC</button>
+                        <button onclick="filterCategory('Retro')" class="category-btn border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 transition" data-category="Retro"><i class="fa-solid fa-ghost mr-1 text-amber-400"></i>Rétro</button>
                     </div>
-                </div>
+                </section>
 
+                <!-- GAMES GRID CATALOGUE -->
+                <section class="space-y-4">
+                    <div id="games-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Cards chargées dynamiquement -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="empty-state" class="hidden glass-panel rounded-3xl p-12 text-center space-y-3">
+                        <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto text-gray-500 text-2xl">
+                            <i class="fa-solid fa-folder-open"></i>
+                        </div>
+                        <h4 class="text-base font-semibold text-gray-200">Aucun jeu trouvé</h4>
+                        <p class="text-xs text-gray-400 max-w-sm mx-auto">Aucun élément ne correspond à votre filtre ou recherche.</p>
+                    </div>
+
+                    <!-- PAGINATION CONTROL -->
+                    <div id="pagination-container" class="glass-panel rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+                        <div class="text-xs text-gray-400" id="pagination-info">Affichage de 0 jeux</div>
+                        <div class="flex items-center gap-2" id="pagination-buttons"></div>
+                    </div>
+                </section>
             </div>
 
+            <!-- TAB 2: AVIS ET CHAT DES JOUEURS -->
+            <div id="tabChatView" class="hidden space-y-6">
+                <section class="glass-panel rounded-3xl p-6 lg:p-8 space-y-4">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-comments text-blue-400"></i>
+                            Avis et Commentaires des Joueurs
+                        </h3>
+                    </div>
+                    <div id="adminChatContainer" class="space-y-3">
+                        <p class="text-center text-gray-400 py-4">Chargement des avis...</p>
+                    </div>
+                </section>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL: CREATION / EDIT DE JEU -->
+    <div id="modal-game" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden p-4 overflow-y-auto">
+        <div class="glass-panel rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 lg:p-8 space-y-6 border border-white/20">
+            
+            <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                <div>
+                    <h3 id="modal-game-title" class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up text-blue-400"></i>
+                        Publier un nouveau jeu
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-1">Remplissez les détails du jeu pour le mettre en ligne sur Firestore.</p>
+                </div>
+                <button onclick="closeGameModal()" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="addGameForm" class="space-y-5">
+                <input type="hidden" id="editing-game-id" value="">
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="md:col-span-2 space-y-1">
+                        <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Titre du Jeu *</label>
+                        <input type="text" id="gameTitle" required placeholder="Ex: God of War: Ghost of Sparta" class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Plateforme *</label>
+                        <select id="gamePlatform" class="w-full px-4 py-3 rounded-2xl glass-input text-sm bg-gray-900">
+                            <option value="PSP">PSP</option>
+                            <option value="PS2">PS2</option>
+                            <option value="Android">Android</option>
+                            <option value="PC">PC</option>
+                            <option value="Retro">Rétro</option>
+                            <option value="custom">Autre (Personnalisé)...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="customPlatformContainer" class="hidden space-y-1">
+                    <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Nom de la plateforme personnalisée</label>
+                    <input type="text" id="customPlatformInput" placeholder="Ex: Nintendo Switch, PS Vita..." class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Taille du fichier</label>
+                        <input type="text" id="gameSize" placeholder="Ex: 1.2 Go" class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">URL de l'image (Cover)</label>
+                        <input type="url" id="gameImage" placeholder="https://..." class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
+                    </div>
+                </div>
+
+                <!-- MODE DE FOURNITURE DU FICHIER -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Source du fichier principal</label>
+                    
+                    <div class="inline-flex p-1 rounded-2xl bg-black/40 border border-white/10 gap-1 mb-2">
+                        <button type="button" id="btn-mode-link" onclick="switchUploadMode('link')" 
+                                class="px-4 py-2 rounded-xl text-xs font-medium transition-all bg-blue-600 text-white shadow-md">
+                            <i class="fa-solid fa-link mr-1.5"></i> Lien URL Direct
+                        </button>
+                        <button type="button" id="btn-mode-file" onclick="switchUploadMode('file')" 
+                                class="px-4 py-2 rounded-xl text-xs font-medium transition-all text-gray-400 hover:text-white">
+                            <i class="fa-solid fa-file-arrow-up mr-1.5"></i> Téléverser un fichier local
+                        </button>
+                    </div>
+
+                    <div id="area-mode-link">
+                        <input type="url" id="gameDownloadUrl" placeholder="https://serveur.com/fichiers/jeu.iso" class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
+                    </div>
+
+                    <div id="area-mode-file" class="hidden">
+                        <div class="border-2 border-dashed border-white/20 rounded-2xl p-4 text-center hover:border-blue-500/50 transition cursor-pointer bg-black/20" onclick="document.getElementById('file-input').click()">
+                            <input type="file" id="file-input" class="hidden" onchange="handleFileSelect(event)">
+                            <i class="fa-solid fa-cloud-arrow-up text-2xl text-blue-400 mb-1"></i>
+                            <p id="file-selected-text" class="text-xs font-medium text-gray-200">Cliquez pour choisir un fichier (.iso, .apk, .zip...)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Description</label>
+                    <textarea id="gameDescription" rows="3" placeholder="Description courte du jeu..." class="w-full px-4 py-3 rounded-2xl glass-input text-sm resize-none"></textarea>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Lien ou ID YouTube (Bande-annonce / Gameplay)</label>
+                    <input type="text" id="gameYoutube" placeholder="https://www.youtube.com/watch?v=..." class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
+                </div>
+
+                <!-- LIENS MIROIRS MULTIPLES -->
+                <div class="space-y-2 pt-3 border-t border-white/10">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Liens Miroirs Additionnels</label>
+                        <button type="button" id="addMoreLinksBtn" class="px-3 py-1.5 rounded-xl bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 text-xs font-semibold transition border border-blue-500/30">
+                            <i class="fa-solid fa-plus mr-1"></i> Ajouter un miroir
+                        </button>
+                    </div>
+                    <div id="downloadLinksList" class="space-y-2">
+                        <div class="input-group flex gap-2 link-row">
+                            <input type="text" class="glass-input px-3.5 py-2 rounded-xl text-xs link-name w-1/3" placeholder="Nom" value="Télécharger (Mediafire)">
+                            <input type="url" class="glass-input px-3.5 py-2 rounded-xl text-xs link-url flex-1" placeholder="https://mediafire.com/file/..." required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+                    <button type="button" onclick="closeGameModal()" class="px-5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-medium transition">
+                        Annuler
+                    </button>
+                    <button type="submit" id="submit-btn" class="px-7 py-2.5 rounded-2xl glass-btn-primary text-white text-xs font-semibold flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span id="submit-btn-text">Enregistrer le jeu</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- BARRE DE NAVIGATION INFÉRIEURE (BOTTOM NAV BAR) -->
-    <div id="bottomNavBar" class="bottom-nav-bar d-none">
-        <button id="navGamesBtn" class="bottom-nav-btn active" onclick="switchTab('games')">
-            <i class="fa-solid fa-gamepad"></i>
-            <span>Jeux</span>
-        </button>
-        <button id="navChatBtn" class="bottom-nav-btn" onclick="switchTab('chat')">
-            <i class="fa-solid fa-comments"></i>
-            <span>Avis & Chat</span>
-            <span id="unreadBadgeNav" class="notification-badge-rgb d-none">0</span>
-        </button>
+    <!-- MODAL: LOGS SYSTEME -->
+    <div id="modal-logs" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden p-4">
+        <div class="glass-panel rounded-3xl w-full max-w-2xl max-h-[85vh] flex flex-col p-6 space-y-4 border border-white/20">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                        <i class="fa-solid fa-terminal"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Journal d'activités (Logs)</h3>
+                </div>
+                <button onclick="toggleLogsModal(false)" class="text-gray-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="logs-list" class="flex-1 overflow-y-auto space-y-2 pr-1 font-mono text-xs">
+                <!-- Log entries dynamically added -->
+            </div>
+
+            <div class="flex justify-between items-center pt-3 border-t border-white/10">
+                <button onclick="clearLogs()" class="text-xs text-red-400 hover:text-red-300 font-medium">
+                    <i class="fa-solid fa-trash mr-1"></i> Effacer l'historique
+                </button>
+                <button onclick="toggleLogsModal(false)" class="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold">
+                    Fermer
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- LOGIQUE JAVASCRIPT ET FIREBASE -->
+    <!-- JAVASCRIPT & FIREBASE INTEGRATION -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCqYr_bxu0ZmO8_8-p9pHLdB_F0Nye2cXA",
             authDomain: "dr-las.firebaseapp.com",
@@ -468,24 +447,71 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // State Global Variables
+        let rawGamesList = [];
+        let systemLogs = [];
+        let activeCategoryFilter = 'All';
+        let searchQuery = '';
+        let currentPage = 1;
+        const itemsPerPage = 6;
+        let currentUploadMode = 'link';
+
+        // Elements DOM
         const loginSection = document.getElementById('loginSection');
         const dashboardSection = document.getElementById('dashboardSection');
-        const bottomNavBar = document.getElementById('bottomNavBar');
         const loginForm = document.getElementById('loginForm');
         const loginError = document.getElementById('loginError');
         const logoutBtn = document.getElementById('logoutBtn');
         const addGameForm = document.getElementById('addGameForm');
-        const adminGamesContainer = document.getElementById('adminGamesContainer');
-        const gameCount = document.getElementById('gameCount');
-
         const gamePlatformSelect = document.getElementById('gamePlatform');
         const customPlatformContainer = document.getElementById('customPlatformContainer');
         const customPlatformInput = document.getElementById('customPlatformInput');
 
-        let currentChatFilter = 'unread';
-        let cachedComments = [];
+        // Initialisation des Logs
+        function addLog(message, type = 'info') {
+            const time = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            systemLogs.unshift({ message, type, time });
+            updateLogUI();
+        }
 
-        // BASE DE NAVIGATION
+        function updateLogUI() {
+            const badge = document.getElementById('log-badge-count');
+            const list = document.getElementById('logs-list');
+            if (badge) badge.innerText = systemLogs.length;
+
+            if (list) {
+                list.innerHTML = systemLogs.map(log => {
+                    let colorClass = 'text-gray-300';
+                    let icon = 'fa-info-circle text-blue-400';
+                    if (log.type === 'success') { colorClass = 'text-emerald-300'; icon = 'fa-check-circle text-emerald-400'; }
+                    else if (log.type === 'warning') { colorClass = 'text-amber-300'; icon = 'fa-triangle-exclamation text-amber-400'; }
+                    else if (log.type === 'danger') { colorClass = 'text-red-300'; icon = 'fa-circle-xmark text-red-400'; }
+
+                    return `
+                        <div class="p-2 rounded-xl bg-white/5 border border-white/5 flex items-start justify-between gap-2">
+                            <div class="flex items-start gap-2">
+                                <i class="fa-solid ${icon} mt-0.5"></i>
+                                <span class="${colorClass}">${log.message}</span>
+                            </div>
+                            <span class="text-[10px] text-gray-500 whitespace-nowrap">${log.time}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        window.toggleLogsModal = function(show) {
+            const modal = document.getElementById('modal-logs');
+            if (show) modal.classList.remove('hidden');
+            else modal.classList.add('hidden');
+        };
+
+        window.clearLogs = function() {
+            systemLogs = [];
+            addLog('Logs réinitialisés', 'warning');
+        };
+
+        // Navigation entre Onglets
         window.switchTab = function(tabName) {
             const gamesView = document.getElementById('tabGamesView');
             const chatView = document.getElementById('tabChatView');
@@ -493,56 +519,103 @@
             const navChatBtn = document.getElementById('navChatBtn');
 
             if (tabName === 'games') {
-                gamesView.classList.add('show', 'active');
-                chatView.classList.remove('show', 'active');
-                navGamesBtn.classList.add('active');
-                navChatBtn.classList.remove('active');
+                gamesView.classList.remove('hidden');
+                chatView.classList.add('hidden');
+                navGamesBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-semibold transition active bg-blue-600 text-white";
+                navChatBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-semibold transition text-gray-400 hover:text-white relative";
             } else {
-                chatView.classList.add('show', 'active');
-                gamesView.classList.remove('show', 'active');
-                navChatBtn.classList.add('active');
-                navGamesBtn.classList.remove('active');
+                chatView.classList.remove('hidden');
+                gamesView.classList.add('hidden');
+                navChatBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-semibold transition active bg-blue-600 text-white relative";
+                navGamesBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-semibold transition text-gray-400 hover:text-white";
             }
         };
 
-        // GESTION DES MIROIRS TÉLÉCHARGEMENT
+        // Modal de création/édition
+        window.openGameModal = function() {
+            document.getElementById('addGameForm').reset();
+            document.getElementById('editing-game-id').value = '';
+            document.getElementById('modal-game-title').innerText = 'Publier un nouveau jeu';
+            document.getElementById('submit-btn-text').innerText = 'Publier sur le Store';
+            document.getElementById('downloadLinksList').innerHTML = `
+                <div class="input-group flex gap-2 link-row">
+                    <input type="text" class="glass-input px-3.5 py-2 rounded-xl text-xs link-name w-1/3" placeholder="Nom" value="Télécharger (Mediafire)">
+                    <input type="url" class="glass-input px-3.5 py-2 rounded-xl text-xs link-url flex-1" placeholder="https://mediafire.com/file/..." required>
+                </div>
+            `;
+            customPlatformContainer.classList.add('hidden');
+            document.getElementById('modal-game').classList.remove('hidden');
+        };
+
+        window.closeGameModal = function() {
+            document.getElementById('modal-game').classList.add('hidden');
+        };
+
+        // Switch Mode Envoi Fichier / Lien
+        window.switchUploadMode = function(mode) {
+            currentUploadMode = mode;
+            const btnLink = document.getElementById('btn-mode-link');
+            const btnFile = document.getElementById('btn-mode-file');
+            const areaLink = document.getElementById('area-mode-link');
+            const areaFile = document.getElementById('area-mode-file');
+
+            if (mode === 'file') {
+                btnFile.className = "px-4 py-2 rounded-xl text-xs font-medium transition-all bg-blue-600 text-white shadow-md";
+                btnLink.className = "px-4 py-2 rounded-xl text-xs font-medium transition-all text-gray-400 hover:text-white";
+                areaFile.classList.remove('hidden');
+                areaLink.classList.add('hidden');
+            } else {
+                btnLink.className = "px-4 py-2 rounded-xl text-xs font-medium transition-all bg-blue-600 text-white shadow-md";
+                btnFile.className = "px-4 py-2 rounded-xl text-xs font-medium transition-all text-gray-400 hover:text-white";
+                areaLink.classList.remove('hidden');
+                areaFile.classList.add('hidden');
+            }
+        };
+
+        window.handleFileSelect = function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('file-selected-text').innerHTML = `Fichier sélectionné : <span class="text-blue-400 font-bold">${file.name}</span> (${(file.size / (1024 * 1024)).toFixed(1)} Mo)`;
+            }
+        };
+
+        // Envoi dynamique de liens miroirs
         document.getElementById('addMoreLinksBtn').addEventListener('click', () => {
             const container = document.getElementById('downloadLinksList');
             const rowCount = container.querySelectorAll('.link-row').length + 1;
             const div = document.createElement('div');
-            div.className = 'input-group mb-2 link-row';
+            div.className = 'input-group flex gap-2 link-row mt-2';
             div.innerHTML = `
-                <input type="text" class="form-control link-name" placeholder="Nom" value="Miroir ${rowCount}">
-                <input type="url" class="form-control link-url" placeholder="https://..." required>
-                <button type="button" class="btn btn-outline-danger remove-link-btn"><i class="fa-solid fa-times"></i></button>
+                <input type="text" class="glass-input px-3.5 py-2 rounded-xl text-xs link-name w-1/3" placeholder="Nom" value="Miroir ${rowCount}">
+                <input type="url" class="glass-input px-3.5 py-2 rounded-xl text-xs link-url flex-1" placeholder="https://..." required>
+                <button type="button" class="px-3 py-2 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 text-xs transition remove-link-btn"><i class="fa-solid fa-times"></i></button>
             `;
             container.appendChild(div);
-
             div.querySelector('.remove-link-btn').addEventListener('click', () => div.remove());
         });
 
+        // Plateforme Custom
         gamePlatformSelect.addEventListener('change', () => {
             if (gamePlatformSelect.value === 'custom') {
-                customPlatformContainer.classList.remove('d-none');
+                customPlatformContainer.classList.remove('hidden');
                 customPlatformInput.setAttribute('required', 'required');
             } else {
-                customPlatformContainer.classList.add('d-none');
+                customPlatformContainer.classList.add('hidden');
                 customPlatformInput.removeAttribute('required');
             }
         });
 
-        // AUTHENTIFICATION
+        // Authentification Firebase
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                loginSection.classList.add('d-none');
-                dashboardSection.classList.remove('d-none');
-                bottomNavBar.classList.remove('d-none');
+                loginSection.classList.add('hidden');
+                dashboardSection.classList.remove('hidden');
+                addLog(`Connexion réussie : ${user.email}`, 'success');
                 loadAdminGames();
                 loadAdminChat();
             } else {
-                dashboardSection.classList.add('d-none');
-                bottomNavBar.classList.add('d-none');
-                loginSection.classList.remove('d-none');
+                dashboardSection.classList.add('hidden');
+                loginSection.classList.remove('hidden');
             }
         });
 
@@ -550,16 +623,20 @@
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
-            loginError.classList.add('d-none');
+            loginError.classList.add('hidden');
             try {
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
-                loginError.textContent = "Email ou mot de passe invalide.";
-                loginError.classList.remove('d-none');
+                loginError.textContent = "Identifiants invalides.";
+                loginError.classList.remove('hidden');
+                addLog("Tentative de connexion échouée", "danger");
             }
         });
 
-        logoutBtn.addEventListener('click', () => signOut(auth));
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth);
+            addLog("Déconnexion de la session admin", "warning");
+        });
 
         function extractYoutubeId(urlOrId) {
             if (!urlOrId) return "";
@@ -568,197 +645,341 @@
             return (match && match[2].length === 11) ? match[2] : urlOrId.trim();
         }
 
-        // PUBLICATION DU JEU
+        // Soumission (Création / Edition) vers Firestore
         addGameForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const title = document.getElementById('gameTitle').value;
+
+            const editId = document.getElementById('editing-game-id').value;
+            const title = document.getElementById('gameTitle').value.trim();
             let platform = gamePlatformSelect.value;
             if (platform === 'custom') platform = customPlatformInput.value.trim();
 
-            const size = document.getElementById('gameSize').value;
-            const imageUrl = document.getElementById('gameImage').value;
+            const size = document.getElementById('gameSize').value.trim() || 'Libre';
+            const imageUrl = document.getElementById('gameImage').value.trim() || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80';
             const description = document.getElementById('gameDescription').value.trim();
             const youtubeRaw = document.getElementById('gameYoutube').value.trim();
             const youtubeId = extractYoutubeId(youtubeRaw);
 
+            let mainDownloadUrl = document.getElementById('gameDownloadUrl').value.trim();
+            const fileInput = document.getElementById('file-input');
+            
+            if (currentUploadMode === 'file' && fileInput.files.length > 0) {
+                mainDownloadUrl = `[Fichier local] : ${fileInput.files[0].name}`;
+            }
+
             const downloadLinks = [];
-            const linkRows = document.querySelectorAll('.link-row');
-            linkRows.forEach(row => {
+            document.querySelectorAll('.link-row').forEach(row => {
                 const label = row.querySelector('.link-name').value.trim();
                 const url = row.querySelector('.link-url').value.trim();
-                if (url) {
-                    downloadLinks.push({ label: label || 'Télécharger le Jeu', url: url });
-                }
+                if (url) downloadLinks.push({ label: label || 'Télécharger', url: url });
             });
 
-            const firstDownloadUrl = downloadLinks.length > 0 ? downloadLinks[0].url : "";
+            if (downloadLinks.length === 0 && mainDownloadUrl) {
+                downloadLinks.push({ label: 'Télécharger', url: mainDownloadUrl });
+            }
+
+            const payload = {
+                title,
+                platform,
+                category: platform,
+                size,
+                imageUrl,
+                downloadUrl: downloadLinks.length > 0 ? downloadLinks[0].url : mainDownloadUrl,
+                downloadLinks: downloadLinks,
+                youtubeId: youtubeId,
+                description: description || "Aucune description fournie.",
+                updatedAt: serverTimestamp()
+            };
 
             try {
-                await addDoc(collection(db, "games"), {
-                    title,
-                    platform,
-                    category: platform,
-                    size,
-                    imageUrl,
-                    downloadUrl: firstDownloadUrl,
-                    downloadLinks: downloadLinks,
-                    youtubeId: youtubeId,
-                    description,
-                    likes: 0,
-                    rating: "4.8",
-                    createdAt: serverTimestamp()
-                });
-
-                addGameForm.reset();
-                document.getElementById('downloadLinksList').innerHTML = `
-                    <div class="input-group mb-2 link-row">
-                        <input type="text" class="form-control link-name" placeholder="Nom du lien" value="Télécharger (Mediafire)">
-                        <input type="url" class="form-control link-url" placeholder="https://mediafire.com/file/..." required>
-                    </div>
-                `;
-                customPlatformContainer.classList.add('d-none');
-                alert("Jeu publié avec succès sur le Store !");
+                if (editId) {
+                    await updateDoc(doc(db, "games", editId), payload);
+                    showToast("Jeu mis à jour avec succès !", "success");
+                    addLog(`Jeu modifié : "${title}"`, "info");
+                } else {
+                    payload.likes = 0;
+                    payload.rating = "4.8";
+                    payload.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "games"), payload);
+                    showToast("Jeu publié avec succès !", "success");
+                    addLog(`Nouveau jeu créé : "${title}" (${platform})`, "success");
+                }
+                closeGameModal();
             } catch (error) {
-                alert("Erreur de publication : " + error.message);
+                showToast("Erreur : " + error.message, "danger");
+                addLog(`Erreur enregistrement : ${error.message}`, "danger");
             }
         });
 
-        // CHARGEMENT JEUX (REGROUPEMENT PAR SECTIONS AVEC DÉFILEMENT HORIZONTAL)
+        // Écoute des jeux dans Firestore
         function loadAdminGames() {
             const gamesRef = collection(db, "games");
             onSnapshot(gamesRef, (snapshot) => {
-                adminGamesContainer.innerHTML = "";
-                gameCount.textContent = `${snapshot.size} jeu(x)`;
-
-                if (snapshot.empty) {
-                    adminGamesContainer.innerHTML = `<p class="text-center text-muted py-4">Aucun jeu disponible.</p>`;
-                    return;
-                }
-
-                // Regroupement des jeux par plateforme
-                const gamesByPlatform = {};
-                snapshot.forEach((gameDoc) => {
-                    const game = gameDoc.data();
-                    const id = gameDoc.id;
-                    const plat = game.platform || game.category || "PSP";
-
-                    if (!gamesByPlatform[plat]) {
-                        gamesByPlatform[plat] = [];
-                    }
-                    gamesByPlatform[plat].push({ id, ...game });
+                rawGamesList = [];
+                snapshot.forEach((docSnap) => {
+                    rawGamesList.push({ id: docSnap.id, ...docSnap.data() });
                 });
 
-                // Génération HTML pour chaque section
-                Object.keys(gamesByPlatform).forEach((platform) => {
-                    const gamesList = gamesByPlatform[platform];
-                    
-                    let sectionHtml = `
-                        <div class="mb-4">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <h6 class="fw-bold text-info m-0">
-                                    <i class="fa-solid fa-gamepad me-1"></i> ${platform} 
-                                    <span class="badge bg-dark border border-secondary text-muted ms-1">${gamesList.length}</span>
-                                </h6>
-                            </div>
-                            <div class="horizontal-scroll-container">
-                    `;
-
-                    gamesList.forEach((game) => {
-                        sectionHtml += `
-                            <div class="game-item-card">
-                                <button class="btn btn-sm btn-danger rounded-circle delete-btn game-item-delete" data-id="${game.id}" title="Supprimer">
-                                    <i class="fa-solid fa-trash fa-xs"></i>
-                                </button>
-                                <img src="${game.imageUrl || 'https://via.placeholder.com/150'}" class="game-item-img" alt="Cover" onerror="this.src='https://via.placeholder.com/150'">
-                                <div class="game-item-title" title="${game.title}">${game.title}</div>
-                                <div class="game-item-size"><i class="fa-solid fa-hard-drive me-1"></i>${game.size || 'N/A'}</div>
-                            </div>
-                        `;
-                    });
-
-                    sectionHtml += `
-                            </div>
-                        </div>
-                    `;
-
-                    adminGamesContainer.innerHTML += sectionHtml;
-                });
-
-                // Attacher les événements de suppression
-                document.querySelectorAll('.delete-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        const docId = e.currentTarget.getAttribute('data-id');
-                        if (confirm("Supprimer ce jeu du Store ?")) {
-                            await deleteDoc(doc(db, "games", docId));
-                        }
-                    });
-                });
+                document.getElementById('headerGameCount').innerText = `${rawGamesList.length} jeu(x) au total`;
+                renderGamesCatalog();
             });
         }
 
-        // CHARGEMENT CHAT & AVIS
-        function loadAdminChat() {
-            const reviewsRef = collection(db, "gameComments");
-            onSnapshot(reviewsRef, (snapshot) => {
-                cachedComments = [];
-                let unreadCount = 0;
+        // Filtres et Pagination
+        window.filterCategory = function(cat) {
+            activeCategoryFilter = cat;
+            currentPage = 1;
 
-                snapshot.forEach(docSnap => {
-                    const c = { id: docSnap.id, ...docSnap.data() };
-                    cachedComments.push(c);
-
-                    if (!c.readByAdmin && c.username !== "Admin (Dr las)") {
-                        unreadCount++;
-                    }
-                });
-
-                const badgeNav = document.getElementById('unreadBadgeNav');
-                if (unreadCount > 0) {
-                    badgeNav.textContent = unreadCount;
-                    badgeNav.classList.remove('d-none');
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.getAttribute('data-category') === cat) {
+                    btn.className = "category-btn border px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-blue-600 border-blue-500 text-white";
                 } else {
-                    badgeNav.classList.add('d-none');
+                    btn.className = "category-btn border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 transition";
                 }
+            });
+            renderGamesCatalog();
+        };
 
-                renderAdminChat();
+        window.handleSearchInput = function(e) {
+            searchQuery = e.target.value.toLowerCase().trim();
+            const clearBtn = document.getElementById('clear-search-btn');
+            if (searchQuery) clearBtn.classList.remove('hidden');
+            else clearBtn.classList.add('hidden');
+            currentPage = 1;
+            renderGamesCatalog();
+        };
+
+        window.clearSearch = function() {
+            document.getElementById('search-input').value = '';
+            searchQuery = '';
+            document.getElementById('clear-search-btn').classList.add('hidden');
+            renderGamesCatalog();
+        };
+
+        function getFilteredGames() {
+            return rawGamesList.filter(game => {
+                const plat = game.platform || game.category || 'PSP';
+                const matchesCat = (activeCategoryFilter === 'All') || (plat === activeCategoryFilter);
+                const matchesSearch = (game.title || '').toLowerCase().includes(searchQuery) || 
+                                      plat.toLowerCase().includes(searchQuery) ||
+                                      (game.description || '').toLowerCase().includes(searchQuery);
+                return matchesCat && matchesSearch;
             });
         }
 
-        function renderAdminChat() {
-            const container = document.getElementById('adminChatContainer');
-            container.innerHTML = "";
+        function renderGamesCatalog() {
+            const filtered = getFilteredGames();
+            const grid = document.getElementById('games-grid');
+            const emptyState = document.getElementById('empty-state');
 
-            let displayComments = cachedComments;
-
-            if (currentChatFilter === 'unread') {
-                displayComments = cachedComments.filter(c => !c.readByAdmin && c.username !== "Admin (Dr las)");
-            }
-
-            if (displayComments.length === 0) {
-                container.innerHTML = `<p class="text-center text-muted py-4">Aucun commentaire dans cette liste.</p>`;
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                document.getElementById('pagination-container').classList.add('hidden');
                 return;
             }
 
-            displayComments.forEach(comm => {
-                container.innerHTML += `
-                    <div class="card bg-dark border-secondary p-3 mb-2 rounded-4">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <strong class="text-info"><i class="fa-solid fa-user me-1"></i>${comm.username || 'Joueur'}</strong>
-                            <button class="btn btn-sm btn-outline-danger rounded-circle" onclick="deleteCommentAdmin('${comm.id}')">
-                                <i class="fa-solid fa-trash"></i>
+            emptyState.classList.add('hidden');
+            document.getElementById('pagination-container').classList.remove('hidden');
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const paginated = filtered.slice(startIndex, startIndex + itemsPerPage);
+
+            grid.innerHTML = paginated.map(game => `
+                <div class="glass-card rounded-3xl overflow-hidden flex flex-col justify-between relative group">
+                    <div>
+                        <div class="relative h-44 w-full overflow-hidden bg-gray-900">
+                            <img src="${game.imageUrl || 'https://via.placeholder.com/300'}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://via.placeholder.com/300'">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#161626] via-transparent to-transparent"></div>
+                            <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold bg-black/60 backdrop-blur-md text-white border border-white/20">
+                                ${game.platform || game.category || 'PSP'}
+                            </span>
+                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-medium bg-blue-500/80 backdrop-blur-md text-white">
+                                ${game.size || 'N/A'}
+                            </span>
+                        </div>
+                        <div class="p-5 space-y-2">
+                            <h4 class="font-bold text-base text-white line-clamp-1 group-hover:text-blue-400 transition" title="${game.title}">${game.title}</h4>
+                            <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">${game.description || 'Aucune description'}</p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-2 flex items-center justify-between border-t border-white/5 mt-auto">
+                        <span class="text-[10px] text-gray-500 font-mono">${game.downloadLinks ? game.downloadLinks.length : 1} miroir(s)</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="editGame('${game.id}')" title="Modifier" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-blue-500/20 hover:text-blue-400 flex items-center justify-center text-gray-300 text-xs transition border border-white/10">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button onclick="deleteGame('${game.id}')" title="Supprimer" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-red-500/20 hover:text-red-400 flex items-center justify-center text-gray-300 text-xs transition border border-white/10">
+                                <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
-                        <p class="mb-0 text-light small">${comm.text || comm.message}</p>
                     </div>
+                </div>
+            `).join('');
+
+            renderPaginationControls(filtered.length);
+        }
+
+        function renderPaginationControls(totalItems) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+            const container = document.getElementById('pagination-buttons');
+            const info = document.getElementById('pagination-info');
+
+            const start = (currentPage - 1) * itemsPerPage + 1;
+            const end = Math.min(currentPage * itemsPerPage, totalItems);
+            info.innerText = `Affichage de ${totalItems > 0 ? start : 0} à ${end} sur ${totalItems} jeux`;
+
+            let btns = `
+                <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-gray-300 hover:bg-white/10 disabled:opacity-40">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+            `;
+
+            for (let i = 1; i <= totalPages; i++) {
+                btns += `
+                    <button onclick="changePage(${i})" class="px-3 py-1.5 rounded-xl text-xs font-semibold border transition ${currentPage === i ? 'bg-blue-600 border-blue-500 text-white' : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10'}">
+                        ${i}
+                    </button>
                 `;
+            }
+
+            btns += `
+                <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-gray-300 hover:bg-white/10 disabled:opacity-40">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            `;
+
+            container.innerHTML = btns;
+        }
+
+        window.changePage = function(page) {
+            const totalPages = Math.ceil(getFilteredGames().length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderGamesCatalog();
+            }
+        };
+
+        // Remplir la modale pour édition
+        window.editGame = function(id) {
+            const game = rawGamesList.find(g => g.id === id);
+            if (!game) return;
+
+            document.getElementById('editing-game-id').value = game.id;
+            document.getElementById('gameTitle').value = game.title || '';
+            document.getElementById('gamePlatform').value = ['PSP','PS2','Android','PC','Retro'].includes(game.platform) ? game.platform : 'custom';
+            
+            if (document.getElementById('gamePlatform').value === 'custom') {
+                customPlatformContainer.classList.remove('hidden');
+                customPlatformInput.value = game.platform || '';
+            }
+
+            document.getElementById('gameSize').value = game.size || '';
+            document.getElementById('gameImage').value = game.imageUrl || '';
+            document.getElementById('gameDescription').value = game.description || '';
+            document.getElementById('gameYoutube').value = game.youtubeId ? `https://youtube.com/watch?v=${game.youtubeId}` : '';
+            document.getElementById('gameDownloadUrl').value = game.downloadUrl || '';
+
+            const container = document.getElementById('downloadLinksList');
+            if (game.downloadLinks && game.downloadLinks.length > 0) {
+                container.innerHTML = game.downloadLinks.map((link, idx) => `
+                    <div class="input-group flex gap-2 link-row ${idx > 0 ? 'mt-2' : ''}">
+                        <input type="text" class="glass-input px-3.5 py-2 rounded-xl text-xs link-name w-1/3" value="${link.label || 'Miroir'}">
+                        <input type="url" class="glass-input px-3.5 py-2 rounded-xl text-xs link-url flex-1" value="${link.url || ''}" required>
+                        ${idx > 0 ? `<button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 rounded-xl bg-red-500/20 text-red-400 text-xs"><i class="fa-solid fa-times"></i></button>` : ''}
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('modal-game-title').innerText = 'Modifier le jeu';
+            document.getElementById('submit-btn-text').innerText = 'Mettre à jour';
+            document.getElementById('modal-game').classList.remove('hidden');
+        };
+
+        // Supprimer un jeu
+        window.deleteGame = async function(id) {
+            const game = rawGamesList.find(g => g.id === id);
+            if (confirm(`Voulez-vous supprimer définitivement "${game ? game.title : 'ce jeu'}" ?`)) {
+                try {
+                    await deleteDoc(doc(db, "games", id));
+                    showToast("Jeu supprimé de Firestore", "warning");
+                    addLog(`Jeu supprimé ID: ${id}`, "danger");
+                } catch (e) {
+                    showToast("Erreur lors de la suppression", "danger");
+                }
+            }
+        };
+
+        // Charger Chat/Avis Firestore
+        function loadAdminChat() {
+            onSnapshot(collection(db, "gameComments"), (snapshot) => {
+                const container = document.getElementById('adminChatContainer');
+                const badgeNav = document.getElementById('unreadBadgeNav');
+                let unreadCount = 0;
+                let html = "";
+
+                if (snapshot.empty) {
+                    container.innerHTML = `<p class="text-center text-gray-400 py-4">Aucun avis trouvé.</p>`;
+                    return;
+                }
+
+                snapshot.forEach(docSnap => {
+                    const c = { id: docSnap.id, ...docSnap.data() };
+                    if (!c.readByAdmin && c.username !== "Admin (Dr las)") unreadCount++;
+
+                    html += `
+                        <div class="glass-card p-4 rounded-2xl flex justify-between items-start gap-4">
+                            <div>
+                                <strong class="text-blue-400 text-xs flex items-center gap-1 mb-1">
+                                    <i class="fa-solid fa-user"></i> ${c.username || 'Joueur'}
+                                </strong>
+                                <p class="text-gray-200 text-sm">${c.text || c.message}</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 flex items-center justify-center transition shrink-0" onclick="deleteCommentAdmin('${c.id}')">
+                                <i class="fa-solid fa-trash fa-xs"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+                if (unreadCount > 0) {
+                    badgeNav.textContent = unreadCount;
+                    badgeNav.classList.remove('hidden');
+                } else {
+                    badgeNav.classList.add('hidden');
+                }
             });
         }
 
         window.deleteCommentAdmin = async function(commentId) {
             if (confirm("Supprimer cet avis ?")) {
                 await deleteDoc(doc(db, "gameComments", commentId));
+                showToast("Avis supprimé", "info");
             }
         };
+
+        // Notifications Toast UI
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            let icon = 'fa-circle-info text-blue-400';
+            let borderClass = 'border-blue-500/50';
+
+            if (type === 'success') { icon = 'fa-circle-check text-emerald-400'; borderClass = 'border-emerald-500/50'; }
+            else if (type === 'warning') { icon = 'fa-triangle-exclamation text-amber-400'; borderClass = 'border-amber-500/50'; }
+            else if (type === 'danger') { icon = 'fa-circle-xmark text-red-400'; borderClass = 'border-red-500/50'; }
+
+            toast.className = `glass-panel ${borderClass} border px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-xs pointer-events-auto transform transition-all duration-300 translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i><span class="font-medium text-white">${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
     </script>
 </body>
 </html>
