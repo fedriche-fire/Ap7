@@ -590,7 +590,9 @@
                 const file = fileInput.files[0];
                 fileSizeBytes = file.size;
                 const fileName = `uploads/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
-                finalDownloadUrl = `https://b9abcf5d94a779d2f953da462f801f6.r2.cloudflarestorage.com/drlas-bucket/${fileName}`;
+                // Utilise ton domaine public R2 (ou ton domaine personnalisé) :
+finalDownloadUrl = `https://pub-93b55cf31fd646b48572385b242de482.r2.dev/${fileName}`;
+// Remplace pub-xxxx.r2.dev par l'URL publique de ton bucket que tu récupères dans le tableau de bord Cloudflare R2.
                 window.addLog(`Fichier ${file.name} préparé pour R2.`, "info");
             }
 
