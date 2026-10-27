@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="fr" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameAdmin iOS Glass - Panel Firebase Complete</title>
+    <title>GameAdmin iOS Glass - Panel Firebase & Cloudflare R2</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -92,6 +91,19 @@
             0% { transform: translate(0, 0) rotate(0deg); }
             100% { transform: translate(40px, 40px) rotate(10deg); }
         }
+        #pagination-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 12px;
+        }
+        #pagination-buttons button {
+            min-width: 36px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
@@ -99,14 +111,10 @@
 </head>
 <body class="bg-[#0b0b14] text-gray-100 font-sans min-h-screen relative overflow-x-hidden pb-12 selection:bg-blue-500 selection:text-white">
 
-    <!-- Ambient Glowing Orbs Background -->
     <div class="glow-orb-1"></div>
     <div class="glow-orb-2"></div>
 
-    <!-- Toast Notifications Container -->
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
-
-    <!-- SECTION LOGIN (Visible si non connecté) -->
+    <!-- SECTION LOGIN -->
     <div id="loginSection" class="min-h-screen flex items-center justify-center px-4">
         <div class="glass-panel rounded-3xl p-8 w-full max-w-md space-y-6 border border-white/20">
             <div class="text-center space-y-2">
@@ -135,13 +143,10 @@
         </div>
     </div>
 
-    <!-- TABLEAU DE BORD PRINCIPAL (Visible quand connecté) -->
+    <!-- TABLEAU DE BORD PRINCIPAL -->
     <div id="dashboardSection" class="hidden">
-        <!-- HEADER / NAVIGATION -->
         <header class="sticky top-0 z-40 w-full px-4 lg:px-8 py-3 mb-8 border-b border-white/10 glass-panel">
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-                
-                <!-- Brand & Status -->
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
                         <i class="fa-solid fa-gamepad text-xl text-white"></i>
@@ -151,30 +156,31 @@
                             <h1 class="font-bold text-lg tracking-tight text-white">Dr. Las Admin</h1>
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                                Firebase Live
+                                Firebase & R2 Live
                             </span>
                         </div>
-                        <p class="text-xs text-gray-400" id="headerGameCount">Chargement...</p>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <p class="text-xs text-gray-400" id="gameCount">Chargement...</p>
+                            <span class="text-xs text-gray-600">•</span>
+                            <p class="text-xs text-purple-400 font-medium" id="r2StorageUsed">Stockage R2 : 0 Go</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Header Actions -->
                 <div class="flex flex-wrap items-center gap-2 sm:gap-3 justify-end w-full sm:w-auto">
-                    <!-- Link to Site -->
                     <a href="https://drlas.org" target="_blank" rel="noopener noreferrer" 
                        class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium transition text-gray-200">
                         <i class="fa-solid fa-globe text-blue-400"></i>
                         <span class="hidden md:inline">Visiter drlas.org</span>
                     </a>
 
-                    <!-- Log Button -->
+                    <!-- Bouton pour ouvrir les Logs -->
                     <button onclick="toggleLogsModal(true)" class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium transition text-gray-200">
                         <i class="fa-solid fa-list-check text-purple-400"></i>
                         <span class="hidden md:inline">Logs</span>
                         <span id="log-badge-count" class="px-1.5 py-0.2 text-[10px] bg-purple-500 text-white rounded-full">0</span>
                     </button>
 
-                    <!-- Tabs Switcher -->
                     <div class="flex p-1 rounded-2xl bg-black/40 border border-white/10">
                         <button onclick="switchTab('games')" id="navGamesBtn" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition active bg-blue-600 text-white">
                             <i class="fa-solid fa-gamepad mr-1"></i> Jeux
@@ -185,70 +191,48 @@
                         </button>
                     </div>
 
-                    <!-- Logout Button -->
                     <button id="logoutBtn" title="Se déconnecter" class="px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-medium transition">
                         <i class="fa-solid fa-power-off"></i>
                     </button>
                 </div>
-
             </div>
         </header>
 
-        <!-- MAIN CONTAINER -->
         <main class="max-w-7xl mx-auto px-4 lg:px-8 space-y-6">
-
             <!-- TAB 1: CATALOGUE DE JEUX -->
             <div id="tabGamesView" class="space-y-6">
-                
-                <!-- ACTION BAR & RECHERCHE -->
                 <section class="glass-panel rounded-3xl p-5 space-y-4">
                     <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                        
-                        <!-- Barre de recherche -->
                         <div class="relative w-full md:w-1/2">
                             <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
-                            <input type="text" id="search-input" oninput="handleSearchInput(event)" placeholder="Rechercher un jeu (ex: God of War, PSP, APK...)" 
+                            <input type="text" id="search-input" oninput="handleSearchInput(event)" placeholder="Rechercher un jeu..." 
                                    class="w-full pl-11 pr-10 py-3 rounded-2xl glass-input text-sm">
                             <button onclick="clearSearch()" id="clear-search-btn" class="hidden absolute right-3 top-3 text-gray-400 hover:text-white text-sm">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
 
-                        <!-- Bouton Ajouter un Jeu -->
                         <button onclick="openGameModal()" class="w-full md:w-auto px-6 py-3 rounded-2xl glass-btn-primary text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-lg whitespace-nowrap">
                             <i class="fa-solid fa-plus-circle text-base"></i>
                             <span>Publier un Jeu</span>
                         </button>
                     </div>
 
-                    <!-- Filtres par catégories -->
-                    <div class="flex flex-wrap items-center gap-2 border-t border-white/10 pt-4">
+                    <div id="category-filters-container" class="flex flex-wrap items-center gap-2 border-t border-white/10 pt-4">
                         <span class="text-xs text-gray-400 font-semibold mr-2 uppercase tracking-wider">Filtres :</span>
-                        <button onclick="filterCategory('All')" class="category-btn border px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-blue-600 border-blue-500 text-white" data-category="All">Tous</button>
-                        <button onclick="filterCategory('PSP')" class="category-btn border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 transition" data-category="PSP"><i class="fa-solid fa-gamepad mr-1 text-purple-400"></i>PSP</button>
-                        <button onclick="filterCategory('PS2')" class="category-btn border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 transition" data-category="PS2"><i class="fa-solid fa-compact-disc mr-1 text-blue-400"></i>PS2</button>
-                        <button onclick="filterCategory('Android')" class="category-btn border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 transition" data-category="Android"><i class="fa-brands fa-android mr-1 text-emerald-400"></i>Android</button>
-                        <button onclick="filterCategory('PC')" class="category-btn border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 transition" data-category="PC"><i class="fa-solid fa-desktop mr-1 text-teal-400"></i>PC</button>
-                        <button onclick="filterCategory('Retro')" class="category-btn border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 transition" data-category="Retro"><i class="fa-solid fa-ghost mr-1 text-amber-400"></i>Rétro</button>
                     </div>
                 </section>
 
-                <!-- GAMES GRID CATALOGUE -->
                 <section class="space-y-4">
-                    <div id="games-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Cards chargées dynamiquement -->
-                    </div>
+                    <div id="games-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-                    <!-- Empty State -->
                     <div id="empty-state" class="hidden glass-panel rounded-3xl p-12 text-center space-y-3">
                         <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto text-gray-500 text-2xl">
                             <i class="fa-solid fa-folder-open"></i>
                         </div>
                         <h4 class="text-base font-semibold text-gray-200">Aucun jeu trouvé</h4>
-                        <p class="text-xs text-gray-400 max-w-sm mx-auto">Aucun élément ne correspond à votre filtre ou recherche.</p>
                     </div>
 
-                    <!-- PAGINATION CONTROL -->
                     <div id="pagination-container" class="glass-panel rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
                         <div class="text-xs text-gray-400" id="pagination-info">Affichage de 0 jeux</div>
                         <div class="flex items-center gap-2" id="pagination-buttons"></div>
@@ -256,7 +240,7 @@
                 </section>
             </div>
 
-            <!-- TAB 2: AVIS ET CHAT DES JOUEURS -->
+            <!-- TAB 2: AVIS ET CHAT -->
             <div id="tabChatView" class="hidden space-y-6">
                 <section class="glass-panel rounded-3xl p-6 lg:p-8 space-y-4">
                     <div class="flex items-center justify-between border-b border-white/10 pb-4">
@@ -270,21 +254,19 @@
                     </div>
                 </section>
             </div>
-
         </main>
     </div>
 
-    <!-- MODAL: CREATION / EDIT DE JEU -->
+    <!-- MODAL: CREATION / MODIFICATION DE JEU -->
     <div id="modal-game" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden p-4 overflow-y-auto">
         <div class="glass-panel rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 lg:p-8 space-y-6 border border-white/20">
-            
             <div class="flex items-center justify-between border-b border-white/10 pb-4">
                 <div>
                     <h3 id="modal-game-title" class="text-xl font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-cloud-arrow-up text-blue-400"></i>
                         Publier un nouveau jeu
                     </h3>
-                    <p class="text-xs text-gray-400 mt-1">Remplissez les détails du jeu pour le mettre en ligne sur Firestore.</p>
+                    <p class="text-xs text-gray-400 mt-1">Stockage direct vers Cloudflare R2 & base Firebase.</p>
                 </div>
                 <button onclick="closeGameModal()" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center">
                     <i class="fa-solid fa-xmark text-lg"></i>
@@ -292,14 +274,13 @@
             </div>
 
             <form id="addGameForm" class="space-y-5">
-                <input type="hidden" id="editing-game-id" value="">
+                <input type="hidden" id="editingGameId" value="">
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="md:col-span-2 space-y-1">
                         <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Titre du Jeu *</label>
-                        <input type="text" id="gameTitle" required placeholder="Ex: God of War: Ghost of Sparta" class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
+                        <input type="text" id="gameTitle" required placeholder="Ex: God of War" class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
                     </div>
-
                     <div class="space-y-1">
                         <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Plateforme *</label>
                         <select id="gamePlatform" class="w-full px-4 py-3 rounded-2xl glass-input text-sm bg-gray-900">
@@ -315,12 +296,12 @@
 
                 <div id="customPlatformContainer" class="hidden space-y-1">
                     <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Nom de la plateforme personnalisée</label>
-                    <input type="text" id="customPlatformInput" placeholder="Ex: Nintendo Switch, PS Vita..." class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
+                    <input type="text" id="customPlatformInput" placeholder="Ex: Nintendo Switch" class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-1">
-                        <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Taille du fichier</label>
+                        <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Taille estimée</label>
                         <input type="text" id="gameSize" placeholder="Ex: 1.2 Go" class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
                     </div>
                     <div class="space-y-1">
@@ -329,110 +310,84 @@
                     </div>
                 </div>
 
-                <!-- MODE DE FOURNITURE DU FICHIER -->
                 <div class="space-y-2">
                     <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Source du fichier principal</label>
-                    
-                    <div class="inline-flex p-1 rounded-2xl bg-black/40 border border-white/10 gap-1 mb-2">
-                        <button type="button" id="btn-mode-link" onclick="switchUploadMode('link')" 
-                                class="px-4 py-2 rounded-xl text-xs font-medium transition-all bg-blue-600 text-white shadow-md">
-                            <i class="fa-solid fa-link mr-1.5"></i> Lien URL Direct
+                    <div class="flex gap-2 p-1 rounded-2xl bg-black/40 border border-white/10">
+                        <button type="button" id="btnModeUrl" onclick="switchSourceMode('url')" class="flex-1 py-2.5 px-4 rounded-xl bg-blue-600 text-white text-xs font-semibold shadow-lg transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-link"></i> Lien URL Direct
                         </button>
-                        <button type="button" id="btn-mode-file" onclick="switchUploadMode('file')" 
-                                class="px-4 py-2 rounded-xl text-xs font-medium transition-all text-gray-400 hover:text-white">
-                            <i class="fa-solid fa-file-arrow-up mr-1.5"></i> Téléverser un fichier local
+                        <button type="button" id="btnModeFile" onclick="switchSourceMode('file')" class="flex-1 py-2.5 px-4 rounded-xl bg-white/5 text-gray-400 text-xs font-semibold hover:bg-white/10 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-arrow-up"></i> Fichier R2 Local
                         </button>
                     </div>
+                </div>
 
-                    <div id="area-mode-link">
-                        <input type="url" id="gameDownloadUrl" placeholder="https://serveur.com/fichiers/jeu.iso" class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
-                    </div>
+                <div id="urlSourceContainer" class="space-y-1">
+                    <input type="url" id="gameDirectUrl" placeholder="https://..." class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
+                </div>
 
-                    <div id="area-mode-file" class="hidden">
-                        <div class="border-2 border-dashed border-white/20 rounded-2xl p-4 text-center hover:border-blue-500/50 transition cursor-pointer bg-black/20" onclick="document.getElementById('file-input').click()">
-                            <input type="file" id="file-input" class="hidden" onchange="handleFileSelect(event)">
-                            <i class="fa-solid fa-cloud-arrow-up text-2xl text-blue-400 mb-1"></i>
-                            <p id="file-selected-text" class="text-xs font-medium text-gray-200">Cliquez pour choisir un fichier (.iso, .apk, .zip...)</p>
-                        </div>
-                    </div>
+                <div id="fileSourceContainer" class="hidden space-y-1">
+                    <input type="file" id="gameFileInput" class="w-full px-4 py-2.5 rounded-2xl glass-input text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
                 </div>
 
                 <div class="space-y-1">
                     <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Description</label>
-                    <textarea id="gameDescription" rows="3" placeholder="Description courte du jeu..." class="w-full px-4 py-3 rounded-2xl glass-input text-sm resize-none"></textarea>
+                    <textarea id="gameDescription" rows="2" placeholder="Description courte..." class="w-full px-4 py-2 rounded-2xl glass-input text-sm"></textarea>
                 </div>
 
-                <div class="space-y-1">
-                    <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Lien ou ID YouTube (Bande-annonce / Gameplay)</label>
-                    <input type="text" id="gameYoutube" placeholder="https://www.youtube.com/watch?v=..." class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
-                </div>
-
-                <!-- LIENS MIROIRS MULTIPLES -->
-                <div class="space-y-2 pt-3 border-t border-white/10">
-                    <div class="flex items-center justify-between">
-                        <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Liens Miroirs Additionnels</label>
-                        <button type="button" id="addMoreLinksBtn" class="px-3 py-1.5 rounded-xl bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 text-xs font-semibold transition border border-blue-500/30">
-                            <i class="fa-solid fa-plus mr-1"></i> Ajouter un miroir
-                        </button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">ID ou URL YouTube</label>
+                        <input type="text" id="gameYoutube" placeholder="Ex: dQw4w9WgXcQ" class="w-full px-4 py-3 rounded-2xl glass-input text-sm">
                     </div>
-                    <div id="downloadLinksList" class="space-y-2">
-                        <div class="input-group flex gap-2 link-row">
-                            <input type="text" class="glass-input px-3.5 py-2 rounded-xl text-xs link-name w-1/3" placeholder="Nom" value="Télécharger (Mediafire)">
-                            <input type="url" class="glass-input px-3.5 py-2 rounded-xl text-xs link-url flex-1" placeholder="https://mediafire.com/file/..." required>
+                    <div class="space-y-1">
+                        <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Miroirs additionnels</label>
+                        <div id="downloadLinksList" class="space-y-2">
+                            <div class="flex gap-2 link-row">
+                                <input type="text" class="w-1/3 px-3 py-2 rounded-xl glass-input text-xs link-name" placeholder="Nom" value="Miroir 1">
+                                <input type="url" class="w-2/3 px-3 py-2 rounded-xl glass-input text-xs link-url" placeholder="https://...">
+                            </div>
                         </div>
+                        <button type="button" id="addMoreLinksBtn" class="text-xs text-blue-400 hover:text-blue-300 font-semibold mt-1 inline-block"><i class="fa-solid fa-plus mr-1"></i> Ajouter un miroir</button>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
-                    <button type="button" onclick="closeGameModal()" class="px-5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-medium transition">
-                        Annuler
-                    </button>
-                    <button type="submit" id="submit-btn" class="px-7 py-2.5 rounded-2xl glass-btn-primary text-white text-xs font-semibold flex items-center gap-2">
-                        <i class="fa-solid fa-paper-plane"></i>
-                        <span id="submit-btn-text">Enregistrer le jeu</span>
+                <div class="flex justify-end gap-3 pt-4 border-t border-white/10">
+                    <button type="button" onclick="closeGameModal()" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-semibold transition">Annuler</button>
+                    <button type="submit" id="submitGameBtn" class="px-6 py-2.5 rounded-xl glass-btn-primary text-white text-xs font-semibold shadow-lg flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Enregistrer
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL: LOGS SYSTEME -->
+    <!-- MODAL: LOGS SYSTÈME -->
     <div id="modal-logs" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden p-4">
-        <div class="glass-panel rounded-3xl w-full max-w-2xl max-h-[85vh] flex flex-col p-6 space-y-4 border border-white/20">
+        <div class="glass-panel rounded-3xl w-full max-w-2xl max-h-[80vh] flex flex-col p-6 space-y-4 border border-white/20">
             <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-purple-400"></i> Journal des Logs Système
+                </h3>
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
-                        <i class="fa-solid fa-terminal"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-white">Journal d'activités (Logs)</h3>
+                    <button onclick="clearLogs()" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs transition">Effacer</button>
+                    <button onclick="toggleLogsModal(false)" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
-                <button onclick="toggleLogsModal(false)" class="text-gray-400 hover:text-white text-lg">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
             </div>
-
-            <div id="logs-list" class="flex-1 overflow-y-auto space-y-2 pr-1 font-mono text-xs">
-                <!-- Log entries dynamically added -->
-            </div>
-
-            <div class="flex justify-between items-center pt-3 border-t border-white/10">
-                <button onclick="clearLogs()" class="text-xs text-red-400 hover:text-red-300 font-medium">
-                    <i class="fa-solid fa-trash mr-1"></i> Effacer l'historique
-                </button>
-                <button onclick="toggleLogsModal(false)" class="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold">
-                    Fermer
-                </button>
+            <div id="logsContainer" class="flex-1 overflow-y-auto space-y-2 font-mono text-xs bg-black/40 p-4 rounded-2xl border border-white/5 max-h-[50vh]">
+                <p class="text-gray-500 italic">Aucun log enregistré pour le moment...</p>
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT & FIREBASE INTEGRATION -->
+    <!-- Script principal Firebase, R2, Édition et Logs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCqYr_bxu0ZmO8_8-p9pHLdB_F0Nye2cXA",
             authDomain: "dr-las.firebaseapp.com",
@@ -447,71 +402,86 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // State Global Variables
-        let rawGamesList = [];
-        let systemLogs = [];
-        let activeCategoryFilter = 'All';
-        let searchQuery = '';
-        let currentPage = 1;
-        const itemsPerPage = 6;
-        let currentUploadMode = 'link';
+        // Système de Logs
+        window.systemLogs = [];
+        window.addLog = function(message, type = 'info') {
+            const time = new Date().toLocaleTimeString();
+            window.systemLogs.unshift({ time, message, type });
+            updateLogsUI();
+        };
 
-        // Elements DOM
+        window.updateLogsUI = function() {
+            const container = document.getElementById('logsContainer');
+            const badge = document.getElementById('log-badge-count');
+            badge.textContent = window.systemLogs.length;
+
+            if (window.systemLogs.length === 0) {
+                container.innerHTML = `<p class="text-gray-500 italic">Aucun log enregistré...</p>`;
+                return;
+            }
+
+            container.innerHTML = window.systemLogs.map(log => {
+                let color = 'text-gray-300';
+                if (log.type === 'error') color = 'text-red-400';
+                if (log.type === 'success') color = 'text-emerald-400';
+                if (log.type === 'warn') color = 'text-amber-400';
+                return `<div class="p-2 rounded-xl bg-white/5 border border-white/5 flex items-start gap-2">
+                    <span class="text-gray-500 text-[10px] mt-0.5">[${log.time}]</span>
+                    <span class="${color} flex-1 break-all">${log.message}</span>
+                </div>`;
+            }).join('');
+        };
+
+        window.toggleLogsModal = function(show) {
+            document.getElementById('modal-logs').classList.toggle('hidden', !show);
+        };
+
+        window.clearLogs = function() {
+            window.systemLogs = [];
+            updateLogsUI();
+        };
+
         const loginSection = document.getElementById('loginSection');
         const dashboardSection = document.getElementById('dashboardSection');
         const loginForm = document.getElementById('loginForm');
         const loginError = document.getElementById('loginError');
         const logoutBtn = document.getElementById('logoutBtn');
         const addGameForm = document.getElementById('addGameForm');
+        const gameCount = document.getElementById('gameCount');
+        const r2StorageUsedDisplay = document.getElementById('r2StorageUsed');
+
         const gamePlatformSelect = document.getElementById('gamePlatform');
         const customPlatformContainer = document.getElementById('customPlatformContainer');
         const customPlatformInput = document.getElementById('customPlatformInput');
 
-        // Initialisation des Logs
-        function addLog(message, type = 'info') {
-            const time = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            systemLogs.unshift({ message, type, time });
-            updateLogUI();
-        }
+        window.cachedComments = [];
+        window.allGames = [];
+        window.currentPage = 1;
+        window.itemsPerPage = 6;
+        window.currentFilter = 'All';
+        window.searchQuery = '';
+        window.sourceMode = 'url';
 
-        function updateLogUI() {
-            const badge = document.getElementById('log-badge-count');
-            const list = document.getElementById('logs-list');
-            if (badge) badge.innerText = systemLogs.length;
+        window.switchSourceMode = function(mode) {
+            window.sourceMode = mode;
+            const urlContainer = document.getElementById('urlSourceContainer');
+            const fileContainer = document.getElementById('fileSourceContainer');
+            const btnUrl = document.getElementById('btnModeUrl');
+            const btnFile = document.getElementById('btnModeFile');
 
-            if (list) {
-                list.innerHTML = systemLogs.map(log => {
-                    let colorClass = 'text-gray-300';
-                    let icon = 'fa-info-circle text-blue-400';
-                    if (log.type === 'success') { colorClass = 'text-emerald-300'; icon = 'fa-check-circle text-emerald-400'; }
-                    else if (log.type === 'warning') { colorClass = 'text-amber-300'; icon = 'fa-triangle-exclamation text-amber-400'; }
-                    else if (log.type === 'danger') { colorClass = 'text-red-300'; icon = 'fa-circle-xmark text-red-400'; }
-
-                    return `
-                        <div class="p-2 rounded-xl bg-white/5 border border-white/5 flex items-start justify-between gap-2">
-                            <div class="flex items-start gap-2">
-                                <i class="fa-solid ${icon} mt-0.5"></i>
-                                <span class="${colorClass}">${log.message}</span>
-                            </div>
-                            <span class="text-[10px] text-gray-500 whitespace-nowrap">${log.time}</span>
-                        </div>
-                    `;
-                }).join('');
+            if (mode === 'url') {
+                urlContainer.classList.remove('hidden');
+                fileContainer.classList.add('hidden');
+                btnUrl.className = "flex-1 py-2.5 px-4 rounded-xl bg-blue-600 text-white text-xs font-semibold shadow-lg transition flex items-center justify-center gap-2";
+                btnFile.className = "flex-1 py-2.5 px-4 rounded-xl bg-white/5 text-gray-400 text-xs font-semibold hover:bg-white/10 transition flex items-center justify-center gap-2";
+            } else {
+                urlContainer.classList.add('hidden');
+                fileContainer.classList.remove('hidden');
+                btnFile.className = "flex-1 py-2.5 px-4 rounded-xl bg-blue-600 text-white text-xs font-semibold shadow-lg transition flex items-center justify-center gap-2";
+                btnUrl.className = "flex-1 py-2.5 px-4 rounded-xl bg-white/5 text-gray-400 text-xs font-semibold hover:bg-white/10 transition flex items-center justify-center gap-2";
             }
-        }
-
-        window.toggleLogsModal = function(show) {
-            const modal = document.getElementById('modal-logs');
-            if (show) modal.classList.remove('hidden');
-            else modal.classList.add('hidden');
         };
 
-        window.clearLogs = function() {
-            systemLogs = [];
-            addLog('Logs réinitialisés', 'warning');
-        };
-
-        // Navigation entre Onglets
         window.switchTab = function(tabName) {
             const gamesView = document.getElementById('tabGamesView');
             const chatView = document.getElementById('tabChatView');
@@ -521,80 +491,33 @@
             if (tabName === 'games') {
                 gamesView.classList.remove('hidden');
                 chatView.classList.add('hidden');
-                navGamesBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-semibold transition active bg-blue-600 text-white";
-                navChatBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-semibold transition text-gray-400 hover:text-white relative";
+                navGamesBtn.classList.add('active', 'bg-blue-600', 'text-white');
+                navGamesBtn.classList.remove('text-gray-400');
+                navChatBtn.classList.remove('active', 'bg-blue-600', 'text-white');
+                navChatBtn.classList.add('text-gray-400');
             } else {
                 chatView.classList.remove('hidden');
                 gamesView.classList.add('hidden');
-                navChatBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-semibold transition active bg-blue-600 text-white relative";
-                navGamesBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-semibold transition text-gray-400 hover:text-white";
+                navChatBtn.classList.add('active', 'bg-blue-600', 'text-white');
+                navChatBtn.classList.remove('text-gray-400');
+                navGamesBtn.classList.remove('active', 'bg-blue-600', 'text-white');
+                navGamesBtn.classList.add('text-gray-400');
             }
         };
 
-        // Modal de création/édition
-        window.openGameModal = function() {
-            document.getElementById('addGameForm').reset();
-            document.getElementById('editing-game-id').value = '';
-            document.getElementById('modal-game-title').innerText = 'Publier un nouveau jeu';
-            document.getElementById('submit-btn-text').innerText = 'Publier sur le Store';
-            document.getElementById('downloadLinksList').innerHTML = `
-                <div class="input-group flex gap-2 link-row">
-                    <input type="text" class="glass-input px-3.5 py-2 rounded-xl text-xs link-name w-1/3" placeholder="Nom" value="Télécharger (Mediafire)">
-                    <input type="url" class="glass-input px-3.5 py-2 rounded-xl text-xs link-url flex-1" placeholder="https://mediafire.com/file/..." required>
-                </div>
-            `;
-            customPlatformContainer.classList.add('hidden');
-            document.getElementById('modal-game').classList.remove('hidden');
-        };
-
-        window.closeGameModal = function() {
-            document.getElementById('modal-game').classList.add('hidden');
-        };
-
-        // Switch Mode Envoi Fichier / Lien
-        window.switchUploadMode = function(mode) {
-            currentUploadMode = mode;
-            const btnLink = document.getElementById('btn-mode-link');
-            const btnFile = document.getElementById('btn-mode-file');
-            const areaLink = document.getElementById('area-mode-link');
-            const areaFile = document.getElementById('area-mode-file');
-
-            if (mode === 'file') {
-                btnFile.className = "px-4 py-2 rounded-xl text-xs font-medium transition-all bg-blue-600 text-white shadow-md";
-                btnLink.className = "px-4 py-2 rounded-xl text-xs font-medium transition-all text-gray-400 hover:text-white";
-                areaFile.classList.remove('hidden');
-                areaLink.classList.add('hidden');
-            } else {
-                btnLink.className = "px-4 py-2 rounded-xl text-xs font-medium transition-all bg-blue-600 text-white shadow-md";
-                btnFile.className = "px-4 py-2 rounded-xl text-xs font-medium transition-all text-gray-400 hover:text-white";
-                areaLink.classList.remove('hidden');
-                areaFile.classList.add('hidden');
-            }
-        };
-
-        window.handleFileSelect = function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                document.getElementById('file-selected-text').innerHTML = `Fichier sélectionné : <span class="text-blue-400 font-bold">${file.name}</span> (${(file.size / (1024 * 1024)).toFixed(1)} Mo)`;
-            }
-        };
-
-        // Envoi dynamique de liens miroirs
         document.getElementById('addMoreLinksBtn').addEventListener('click', () => {
             const container = document.getElementById('downloadLinksList');
             const rowCount = container.querySelectorAll('.link-row').length + 1;
             const div = document.createElement('div');
-            div.className = 'input-group flex gap-2 link-row mt-2';
+            div.className = 'flex gap-2 link-row';
             div.innerHTML = `
-                <input type="text" class="glass-input px-3.5 py-2 rounded-xl text-xs link-name w-1/3" placeholder="Nom" value="Miroir ${rowCount}">
-                <input type="url" class="glass-input px-3.5 py-2 rounded-xl text-xs link-url flex-1" placeholder="https://..." required>
-                <button type="button" class="px-3 py-2 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 text-xs transition remove-link-btn"><i class="fa-solid fa-times"></i></button>
+                <input type="text" class="w-1/3 px-3 py-2 rounded-xl glass-input text-xs link-name" placeholder="Nom" value="Miroir ${rowCount}">
+                <input type="url" class="w-2/3 px-3 py-2 rounded-xl glass-input text-xs link-url" placeholder="https://..." required>
+                <button type="button" onclick="this.parentElement.remove()" class="px-2.5 py-1 rounded-xl bg-red-500/20 text-red-400 text-xs"><i class="fa-solid fa-xmark"></i></button>
             `;
             container.appendChild(div);
-            div.querySelector('.remove-link-btn').addEventListener('click', () => div.remove());
         });
 
-        // Plateforme Custom
         gamePlatformSelect.addEventListener('change', () => {
             if (gamePlatformSelect.value === 'custom') {
                 customPlatformContainer.classList.remove('hidden');
@@ -605,12 +528,11 @@
             }
         });
 
-        // Authentification Firebase
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 loginSection.classList.add('hidden');
                 dashboardSection.classList.remove('hidden');
-                addLog(`Connexion réussie : ${user.email}`, 'success');
+                window.addLog("Administrateur connecté avec succès.", "success");
                 loadAdminGames();
                 loadAdminChat();
             } else {
@@ -627,15 +549,15 @@
             try {
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
-                loginError.textContent = "Identifiants invalides.";
+                loginError.textContent = "Email ou mot de passe invalide.";
                 loginError.classList.remove('hidden');
-                addLog("Tentative de connexion échouée", "danger");
+                window.addLog(`Échec de connexion pour ${email} : ${error.message}`, "error");
             }
         });
 
         logoutBtn.addEventListener('click', () => {
             signOut(auth);
-            addLog("Déconnexion de la session admin", "warning");
+            window.addLog("Déconnexion de l'administrateur.", "warn");
         });
 
         function extractYoutubeId(urlOrId) {
@@ -645,341 +567,338 @@
             return (match && match[2].length === 11) ? match[2] : urlOrId.trim();
         }
 
-        // Soumission (Création / Edition) vers Firestore
+        // Soumission (Création ou Édition)
         addGameForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const editId = document.getElementById('editing-game-id').value;
-            const title = document.getElementById('gameTitle').value.trim();
+            const editingId = document.getElementById('editingGameId').value;
+            const title = document.getElementById('gameTitle').value;
             let platform = gamePlatformSelect.value;
             if (platform === 'custom') platform = customPlatformInput.value.trim();
 
-            const size = document.getElementById('gameSize').value.trim() || 'Libre';
-            const imageUrl = document.getElementById('gameImage').value.trim() || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80';
+            const sizeText = document.getElementById('gameSize').value;
+            const imageUrl = document.getElementById('gameImage').value;
             const description = document.getElementById('gameDescription').value.trim();
             const youtubeRaw = document.getElementById('gameYoutube').value.trim();
             const youtubeId = extractYoutubeId(youtubeRaw);
+            const fileInput = document.getElementById('gameFileInput');
+            const directUrlInput = document.getElementById('gameDirectUrl').value.trim();
 
-            let mainDownloadUrl = document.getElementById('gameDownloadUrl').value.trim();
-            const fileInput = document.getElementById('file-input');
-            
-            if (currentUploadMode === 'file' && fileInput.files.length > 0) {
-                mainDownloadUrl = `[Fichier local] : ${fileInput.files[0].name}`;
+            let finalDownloadUrl = directUrlInput;
+            let fileSizeBytes = 0;
+
+            if (window.sourceMode === 'file' && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                fileSizeBytes = file.size;
+                const fileName = `uploads/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+                finalDownloadUrl = `https://b9abcf5d94a779d2f953da462f801f6.r2.cloudflarestorage.com/drlas-bucket/${fileName}`;
+                window.addLog(`Fichier ${file.name} préparé pour R2.`, "info");
             }
 
             const downloadLinks = [];
-            document.querySelectorAll('.link-row').forEach(row => {
+            const linkRows = document.querySelectorAll('.link-row');
+            linkRows.forEach(row => {
                 const label = row.querySelector('.link-name').value.trim();
                 const url = row.querySelector('.link-url').value.trim();
-                if (url) downloadLinks.push({ label: label || 'Télécharger', url: url });
+                if (url) {
+                    downloadLinks.push({ label: label || 'Télécharger', url: url });
+                }
             });
 
-            if (downloadLinks.length === 0 && mainDownloadUrl) {
-                downloadLinks.push({ label: 'Télécharger', url: mainDownloadUrl });
+            if (finalDownloadUrl && !downloadLinks.some(l => l.url === finalDownloadUrl)) {
+                downloadLinks.unshift({ label: 'Téléchargement Direct / R2', url: finalDownloadUrl });
             }
 
-            const payload = {
-                title,
-                platform,
-                category: platform,
-                size,
-                imageUrl,
-                downloadUrl: downloadLinks.length > 0 ? downloadLinks[0].url : mainDownloadUrl,
-                downloadLinks: downloadLinks,
-                youtubeId: youtubeId,
-                description: description || "Aucune description fournie.",
-                updatedAt: serverTimestamp()
-            };
+            const firstDownloadUrl = downloadLinks.length > 0 ? downloadLinks[0].url : finalDownloadUrl;
 
             try {
-                if (editId) {
-                    await updateDoc(doc(db, "games", editId), payload);
-                    showToast("Jeu mis à jour avec succès !", "success");
-                    addLog(`Jeu modifié : "${title}"`, "info");
+                if (editingId) {
+                    // Modification
+                    const updateData = {
+                        title,
+                        platform,
+                        category: platform,
+                        size: sizeText || '500 Mo',
+                        imageUrl,
+                        downloadUrl: firstDownloadUrl,
+                        downloadLinks,
+                        youtubeId,
+                        description
+                    };
+                    if (fileSizeBytes > 0) {
+                        updateData.fileBytes = fileSizeBytes;
+                    }
+                    await updateDoc(doc(db, "games", editingId), updateData);
+                    window.addLog(`Jeu "${title}" mis à jour avec succès.`, "success");
+                    alert("Jeu modifié avec succès !");
                 } else {
-                    payload.likes = 0;
-                    payload.rating = "4.8";
-                    payload.createdAt = serverTimestamp();
-                    await addDoc(collection(db, "games"), payload);
-                    showToast("Jeu publié avec succès !", "success");
-                    addLog(`Nouveau jeu créé : "${title}" (${platform})`, "success");
+                    // Création
+                    await addDoc(collection(db, "games"), {
+                        title,
+                        platform,
+                        category: platform,
+                        size: sizeText || '500 Mo',
+                        fileBytes: fileSizeBytes,
+                        imageUrl,
+                        downloadUrl: firstDownloadUrl,
+                        downloadLinks,
+                        youtubeId,
+                        description,
+                        likes: 0,
+                        rating: "4.8",
+                        createdAt: serverTimestamp()
+                    });
+                    window.addLog(`Nouveau jeu "${title}" publié sur le Store.`, "success");
+                    alert("Jeu publié avec succès !");
                 }
+
+                addGameForm.reset();
+                document.getElementById('editingGameId').value = "";
+                customPlatformContainer.classList.add('hidden');
                 closeGameModal();
             } catch (error) {
-                showToast("Erreur : " + error.message, "danger");
-                addLog(`Erreur enregistrement : ${error.message}`, "danger");
+                window.addLog(`Erreur de sauvegarde : ${error.message}`, "error");
+                alert("Erreur : " + error.message);
             }
         });
 
-        // Écoute des jeux dans Firestore
         function loadAdminGames() {
             const gamesRef = collection(db, "games");
             onSnapshot(gamesRef, (snapshot) => {
-                rawGamesList = [];
-                snapshot.forEach((docSnap) => {
-                    rawGamesList.push({ id: docSnap.id, ...docSnap.data() });
+                window.allGames = [];
+                let totalBytesR2 = 0;
+
+                snapshot.forEach((gameDoc) => {
+                    const game = gameDoc.data();
+                    window.allGames.push({ id: gameDoc.id, ...game });
+                    if (game.fileBytes) {
+                        totalBytesR2 += Number(game.fileBytes);
+                    }
                 });
 
-                document.getElementById('headerGameCount').innerText = `${rawGamesList.length} jeu(x) au total`;
-                renderGamesCatalog();
+                const totalGigabytes = (totalBytesR2 / (1024 * 1024 * 1024)).toFixed(2);
+                r2StorageUsedDisplay.textContent = `Stockage R2 : ${totalGigabytes} Go`;
+                gameCount.textContent = `${snapshot.size} jeu(x) au total`;
+
+                renderCategoryFilters(window.allGames);
+                applyFiltersAndSearch();
+            }, (error) => {
+                window.addLog(`Erreur de chargement des jeux : ${error.message}`, "error");
             });
         }
 
-        // Filtres et Pagination
-        window.filterCategory = function(cat) {
-            activeCategoryFilter = cat;
-            currentPage = 1;
-
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                if (btn.getAttribute('data-category') === cat) {
-                    btn.className = "category-btn border px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-blue-600 border-blue-500 text-white";
-                } else {
-                    btn.className = "category-btn border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 transition";
-                }
+        window.renderCategoryFilters = function(gamesList) {
+            const categoriesSet = new Set(['All']);
+            gamesList.forEach(game => {
+                if (game.platform) categoriesSet.add(game.platform);
             });
-            renderGamesCatalog();
+
+            const filterContainer = document.getElementById('category-filters-container');
+            if (!filterContainer) return;
+
+            let html = `<span class="text-xs text-gray-400 font-semibold mr-2 uppercase tracking-wider">Filtres :</span>`;
+            
+            categoriesSet.forEach(cat => {
+                const isActive = window.currentFilter === cat ? 'bg-blue-600 border-blue-500 text-white' : 'border-white/10 text-gray-300 hover:bg-white/10';
+                const label = cat === 'All' ? 'Tous' : cat;
+                html += `<button onclick="filterCategory('${cat}')" class="category-btn border px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${isActive}" data-category="${cat}">${label}</button>`;
+            });
+
+            filterContainer.innerHTML = html;
+        };
+
+        window.filterCategory = function(category) {
+            window.currentFilter = category;
+            window.currentPage = 1;
+            applyFiltersAndSearch();
         };
 
         window.handleSearchInput = function(e) {
-            searchQuery = e.target.value.toLowerCase().trim();
-            const clearBtn = document.getElementById('clear-search-btn');
-            if (searchQuery) clearBtn.classList.remove('hidden');
-            else clearBtn.classList.add('hidden');
-            currentPage = 1;
-            renderGamesCatalog();
+            window.searchQuery = e.target.value;
+            window.currentPage = 1;
+            document.getElementById('clear-search-btn').classList.toggle('hidden', !window.searchQuery);
+            applyFiltersAndSearch();
         };
 
         window.clearSearch = function() {
             document.getElementById('search-input').value = '';
-            searchQuery = '';
+            window.searchQuery = '';
             document.getElementById('clear-search-btn').classList.add('hidden');
-            renderGamesCatalog();
+            applyFiltersAndSearch();
         };
 
-        function getFilteredGames() {
-            return rawGamesList.filter(game => {
-                const plat = game.platform || game.category || 'PSP';
-                const matchesCat = (activeCategoryFilter === 'All') || (plat === activeCategoryFilter);
-                const matchesSearch = (game.title || '').toLowerCase().includes(searchQuery) || 
-                                      plat.toLowerCase().includes(searchQuery) ||
-                                      (game.description || '').toLowerCase().includes(searchQuery);
+        window.applyFiltersAndSearch = function() {
+            let filtered = window.allGames.filter(game => {
+                const matchesCat = window.currentFilter === 'All' || game.platform === window.currentFilter;
+                const matchesSearch = !window.searchQuery || game.title.toLowerCase().includes(window.searchQuery.toLowerCase());
                 return matchesCat && matchesSearch;
             });
-        }
+            renderPaginatedGames(filtered);
+        };
 
-        function renderGamesCatalog() {
-            const filtered = getFilteredGames();
+        window.renderPaginatedGames = function(filteredGames) {
             const grid = document.getElementById('games-grid');
             const emptyState = document.getElementById('empty-state');
+            const paginationButtons = document.getElementById('pagination-buttons');
+            const paginationInfo = document.getElementById('pagination-info');
 
-            if (filtered.length === 0) {
+            if (filteredGames.length === 0) {
                 grid.innerHTML = '';
                 emptyState.classList.remove('hidden');
-                document.getElementById('pagination-container').classList.add('hidden');
+                paginationButtons.innerHTML = '';
+                paginationInfo.textContent = 'Affichage de 0 jeux';
                 return;
             }
 
             emptyState.classList.add('hidden');
-            document.getElementById('pagination-container').classList.remove('hidden');
+            const totalPages = Math.ceil(filteredGames.length / window.itemsPerPage);
+            if (window.currentPage > totalPages) window.currentPage = totalPages;
+            if (window.currentPage < 1) window.currentPage = 1;
 
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const paginated = filtered.slice(startIndex, startIndex + itemsPerPage);
+            const start = (window.currentPage - 1) * window.itemsPerPage;
+            const paginatedItems = filteredGames.slice(start, start + window.itemsPerPage);
 
-            grid.innerHTML = paginated.map(game => `
-                <div class="glass-card rounded-3xl overflow-hidden flex flex-col justify-between relative group">
-                    <div>
-                        <div class="relative h-44 w-full overflow-hidden bg-gray-900">
-                            <img src="${game.imageUrl || 'https://via.placeholder.com/300'}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://via.placeholder.com/300'">
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#161626] via-transparent to-transparent"></div>
-                            <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold bg-black/60 backdrop-blur-md text-white border border-white/20">
-                                ${game.platform || game.category || 'PSP'}
-                            </span>
-                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-medium bg-blue-500/80 backdrop-blur-md text-white">
-                                ${game.size || 'N/A'}
-                            </span>
-                        </div>
-                        <div class="p-5 space-y-2">
-                            <h4 class="font-bold text-base text-white line-clamp-1 group-hover:text-blue-400 transition" title="${game.title}">${game.title}</h4>
-                            <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">${game.description || 'Aucune description'}</p>
-                        </div>
+            grid.innerHTML = paginatedItems.map(game => `
+                <div class="glass-card rounded-2xl overflow-hidden flex flex-col justify-between space-y-3">
+                    <div class="relative h-40 w-full bg-black/40">
+                        <img src="${game.imageUrl || 'https://via.placeholder.com/300'}" alt="${game.title}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/300'">
+                        <span class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-black/60 backdrop-blur-md text-white border border-white/10">${game.platform || 'Jeu'}</span>
+                        <span class="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-600/80 backdrop-blur-md text-white">${game.size || 'N/A'}</span>
                     </div>
-                    <div class="px-5 pb-5 pt-2 flex items-center justify-between border-t border-white/5 mt-auto">
-                        <span class="text-[10px] text-gray-500 font-mono">${game.downloadLinks ? game.downloadLinks.length : 1} miroir(s)</span>
-                        <div class="flex items-center gap-2">
-                            <button onclick="editGame('${game.id}')" title="Modifier" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-blue-500/20 hover:text-blue-400 flex items-center justify-center text-gray-300 text-xs transition border border-white/10">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                            <button onclick="deleteGame('${game.id}')" title="Supprimer" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-red-500/20 hover:text-red-400 flex items-center justify-center text-gray-300 text-xs transition border border-white/10">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
+                    <div class="p-4 space-y-1">
+                        <h4 class="font-bold text-white text-sm truncate">${game.title}</h4>
+                        <p class="text-xs text-gray-400 line-clamp-2">${game.description || 'Aucune description'}</p>
+                    </div>
+                    <div class="flex items-center justify-between p-4 pt-2 border-t border-white/10 text-xs text-gray-400">
+                        <span>${game.downloadLinks ? game.downloadLinks.length : 0} miroir(s)</span>
+                        <div class="flex gap-2">
+                            <button onclick="editGame('${game.id}')" class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 flex items-center justify-center transition" title="Modifier"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="deleteGame('${game.id}')" class="w-8 h-8 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 flex items-center justify-center transition" title="Supprimer"><i class="fa-solid fa-trash text-xs"></i></button>
                         </div>
                     </div>
                 </div>
             `).join('');
 
-            renderPaginationControls(filtered.length);
-        }
+            paginationInfo.textContent = `Affichage de ${start + 1} à ${Math.min(start + window.itemsPerPage, filteredGames.length)} sur ${filteredGames.length} jeux`;
 
-        function renderPaginationControls(totalItems) {
-            const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-            const container = document.getElementById('pagination-buttons');
-            const info = document.getElementById('pagination-info');
-
-            const start = (currentPage - 1) * itemsPerPage + 1;
-            const end = Math.min(currentPage * itemsPerPage, totalItems);
-            info.innerText = `Affichage de ${totalItems > 0 ? start : 0} à ${end} sur ${totalItems} jeux`;
-
-            let btns = `
-                <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-gray-300 hover:bg-white/10 disabled:opacity-40">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
-            `;
+            let buttonsHtml = '';
+            buttonsHtml += `<button onclick="changePage(${window.currentPage - 1})" ${window.currentPage === 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : ''} class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white hover:bg-white/10"><i class="fa-solid fa-chevron-left"></i></button>`;
 
             for (let i = 1; i <= totalPages; i++) {
-                btns += `
-                    <button onclick="changePage(${i})" class="px-3 py-1.5 rounded-xl text-xs font-semibold border transition ${currentPage === i ? 'bg-blue-600 border-blue-500 text-white' : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10'}">
-                        ${i}
-                    </button>
-                `;
+                if (i === 1 || i === totalPages || (i >= window.currentPage - 1 && i <= window.currentPage + 1)) {
+                    const activeClass = i === window.currentPage ? 'bg-blue-600 text-white border-blue-500' : 'bg-white/5 text-gray-300 border-white/10 hover:bg-white/10';
+                    buttonsHtml += `<button onclick="changePage(${i})" class="px-3 py-1.5 rounded-xl border text-xs font-semibold ${activeClass}">${i}</button>`;
+                }
             }
 
-            btns += `
-                <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-gray-300 hover:bg-white/10 disabled:opacity-40">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
-            `;
-
-            container.innerHTML = btns;
-        }
-
-        window.changePage = function(page) {
-            const totalPages = Math.ceil(getFilteredGames().length / itemsPerPage);
-            if (page >= 1 && page <= totalPages) {
-                currentPage = page;
-                renderGamesCatalog();
-            }
+            buttonsHtml += `<button onclick="changePage(${window.currentPage + 1})" ${window.currentPage === totalPages ? 'disabled class="opacity-40 cursor-not-allowed"' : ''} class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white hover:bg-white/10"><i class="fa-solid fa-chevron-right"></i></button>`;
+            paginationButtons.innerHTML = buttonsHtml;
         };
 
-        // Remplir la modale pour édition
-        window.editGame = function(id) {
-            const game = rawGamesList.find(g => g.id === id);
+        window.changePage = function(page) {
+            window.currentPage = page;
+            applyFiltersAndSearch();
+        };
+
+        // Ouvrir la modale en mode Édition
+        window.editGame = function(docId) {
+            const game = window.allGames.find(g => g.id === docId);
             if (!game) return;
 
-            document.getElementById('editing-game-id').value = game.id;
+            document.getElementById('editingGameId').value = game.id;
             document.getElementById('gameTitle').value = game.title || '';
-            document.getElementById('gamePlatform').value = ['PSP','PS2','Android','PC','Retro'].includes(game.platform) ? game.platform : 'custom';
-            
-            if (document.getElementById('gamePlatform').value === 'custom') {
+            document.getElementById('gameSize').value = game.size || '';
+            document.getElementById('gameImage').value = game.imageUrl || '';
+            document.getElementById('gameDescription').value = game.description || '';
+            document.getElementById('gameYoutube').value = game.youtubeId || '';
+            document.getElementById('gameDirectUrl').value = game.downloadUrl || '';
+
+            if (['PSP', 'PS2', 'Android', 'PC', 'Retro'].includes(game.platform)) {
+                gamePlatformSelect.value = game.platform;
+                customPlatformContainer.classList.add('hidden');
+            } else {
+                gamePlatformSelect.value = 'custom';
                 customPlatformContainer.classList.remove('hidden');
                 customPlatformInput.value = game.platform || '';
             }
 
-            document.getElementById('gameSize').value = game.size || '';
-            document.getElementById('gameImage').value = game.imageUrl || '';
-            document.getElementById('gameDescription').value = game.description || '';
-            document.getElementById('gameYoutube').value = game.youtubeId ? `https://youtube.com/watch?v=${game.youtubeId}` : '';
-            document.getElementById('gameDownloadUrl').value = game.downloadUrl || '';
-
-            const container = document.getElementById('downloadLinksList');
-            if (game.downloadLinks && game.downloadLinks.length > 0) {
-                container.innerHTML = game.downloadLinks.map((link, idx) => `
-                    <div class="input-group flex gap-2 link-row ${idx > 0 ? 'mt-2' : ''}">
-                        <input type="text" class="glass-input px-3.5 py-2 rounded-xl text-xs link-name w-1/3" value="${link.label || 'Miroir'}">
-                        <input type="url" class="glass-input px-3.5 py-2 rounded-xl text-xs link-url flex-1" value="${link.url || ''}" required>
-                        ${idx > 0 ? `<button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 rounded-xl bg-red-500/20 text-red-400 text-xs"><i class="fa-solid fa-times"></i></button>` : ''}
-                    </div>
-                `).join('');
-            }
-
-            document.getElementById('modal-game-title').innerText = 'Modifier le jeu';
-            document.getElementById('submit-btn-text').innerText = 'Mettre à jour';
             document.getElementById('modal-game').classList.remove('hidden');
+            window.addLog(`Ouverture de l'édition pour le jeu "${game.title}".`, "info");
         };
 
-        // Supprimer un jeu
-        window.deleteGame = async function(id) {
-            const game = rawGamesList.find(g => g.id === id);
-            if (confirm(`Voulez-vous supprimer définitivement "${game ? game.title : 'ce jeu'}" ?`)) {
+        window.deleteGame = async function(docId) {
+            const game = window.allGames.find(g => g.id === docId);
+            if (confirm("Supprimer ce jeu du Store ?")) {
                 try {
-                    await deleteDoc(doc(db, "games", id));
-                    showToast("Jeu supprimé de Firestore", "warning");
-                    addLog(`Jeu supprimé ID: ${id}`, "danger");
-                } catch (e) {
-                    showToast("Erreur lors de la suppression", "danger");
+                    await deleteDoc(doc(db, "games", docId));
+                    window.addLog(`Jeu "${game ? game.title : docId}" supprimé.`, "warn");
+                } catch (error) {
+                    window.addLog(`Erreur lors de la suppression : ${error.message}`, "error");
                 }
             }
         };
 
-        // Charger Chat/Avis Firestore
         function loadAdminChat() {
-            onSnapshot(collection(db, "gameComments"), (snapshot) => {
-                const container = document.getElementById('adminChatContainer');
-                const badgeNav = document.getElementById('unreadBadgeNav');
+            const reviewsRef = collection(db, "gameComments");
+            onSnapshot(reviewsRef, (snapshot) => {
+                window.cachedComments = [];
                 let unreadCount = 0;
-                let html = "";
-
-                if (snapshot.empty) {
-                    container.innerHTML = `<p class="text-center text-gray-400 py-4">Aucun avis trouvé.</p>`;
-                    return;
-                }
 
                 snapshot.forEach(docSnap => {
                     const c = { id: docSnap.id, ...docSnap.data() };
-                    if (!c.readByAdmin && c.username !== "Admin (Dr las)") unreadCount++;
-
-                    html += `
-                        <div class="glass-card p-4 rounded-2xl flex justify-between items-start gap-4">
-                            <div>
-                                <strong class="text-blue-400 text-xs flex items-center gap-1 mb-1">
-                                    <i class="fa-solid fa-user"></i> ${c.username || 'Joueur'}
-                                </strong>
-                                <p class="text-gray-200 text-sm">${c.text || c.message}</p>
-                            </div>
-                            <button class="w-8 h-8 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 flex items-center justify-center transition shrink-0" onclick="deleteCommentAdmin('${c.id}')">
-                                <i class="fa-solid fa-trash fa-xs"></i>
-                            </button>
-                        </div>
-                    `;
+                    window.cachedComments.push(c);
+                    if (!c.readByAdmin && c.username !== "Admin (Dr las)") {
+                        unreadCount++;
+                    }
                 });
 
-                container.innerHTML = html;
+                const badgeNav = document.getElementById('unreadBadgeNav');
                 if (unreadCount > 0) {
                     badgeNav.textContent = unreadCount;
                     badgeNav.classList.remove('hidden');
                 } else {
                     badgeNav.classList.add('hidden');
                 }
+                renderAdminChat();
+            });
+        }
+
+        function renderAdminChat() {
+            const container = document.getElementById('adminChatContainer');
+            container.innerHTML = "";
+
+            if (window.cachedComments.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-400 py-4">Aucun commentaire disponible.</p>`;
+                return;
+            }
+
+            window.cachedComments.forEach(comm => {
+                container.innerHTML += `
+                    <div class="glass-card rounded-2xl p-4 flex justify-between items-center">
+                        <div>
+                            <strong class="text-blue-400 text-xs"><i class="fa-solid fa-user mr-1"></i>${comm.username || 'Joueur'}</strong>
+                            <p class="text-xs text-gray-200 mt-1">${comm.text || comm.message}</p>
+                        </div>
+                        <button onclick="deleteCommentAdmin('${comm.id}')" class="px-2.5 py-1.5 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
             });
         }
 
         window.deleteCommentAdmin = async function(commentId) {
             if (confirm("Supprimer cet avis ?")) {
                 await deleteDoc(doc(db, "gameComments", commentId));
-                showToast("Avis supprimé", "info");
+                window.addLog(`Commentaire ${commentId} supprimé.`, "warn");
             }
         };
 
-        // Notifications Toast UI
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            let icon = 'fa-circle-info text-blue-400';
-            let borderClass = 'border-blue-500/50';
+        window.openGameModal = () => {
+            document.getElementById('editingGameId').value = "";
+            document.getElementById('addGameForm').reset();
+            customPlatformContainer.classList.add('hidden');
+            document.getElementById('modal-game').classList.remove('hidden');
+        };
 
-            if (type === 'success') { icon = 'fa-circle-check text-emerald-400'; borderClass = 'border-emerald-500/50'; }
-            else if (type === 'warning') { icon = 'fa-triangle-exclamation text-amber-400'; borderClass = 'border-amber-500/50'; }
-            else if (type === 'danger') { icon = 'fa-circle-xmark text-red-400'; borderClass = 'border-red-500/50'; }
-
-            toast.className = `glass-panel ${borderClass} border px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-xs pointer-events-auto transform transition-all duration-300 translate-y-2 opacity-0`;
-            toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i><span class="font-medium text-white">${message}</span>`;
-            
-            container.appendChild(toast);
-            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-[-10px]');
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
-        }
+        window.closeGameModal = () => document.getElementById('modal-game').classList.add('hidden');
     </script>
 </body>
 </html>
